@@ -61,6 +61,6 @@ REQ-006：首个公开发布明确标记为预发布。README 已列出 arm64、
 - TC-026：release 重新构建通过；17 项核心测试回归通过。
 - TC-027：DMG 校验和、ZIP 压缩完整性通过；DMG 只读挂载，包内 deep/strict 签名验证通过，主二进制与构建产物完全一致，版本正确，Applications 链接和许可文本存在。
 - TC-028：GitHub 仓库改名为 `yangbo-s/Wayfinder`，保持 PUBLIC；origin 已更新，简介与标签已设置。
-- TC-029：远端提交/标签、发布资产下载与哈希在上传后核验；以 GitHub Release 页面和随包 SHA256SUMS 为证据。
+- TC-029：通过。GitHub Release 已发布（isDraft=false，isPrerelease=true），三个资产均 uploaded；源码提交与标签均为 `4320aeb300a6edc8e92c144701ab281b216263cd`。重新下载 DMG / ZIP，SHA-256 均与本地及随包 SHA256SUMS 一致。发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.1 。后续 main 的文档验收提交不改变此标签对应的二进制源码。
 
 整体应用评分仍为 79/100：公开测试版发布不改变系统集成验证缺口，也不代表稳定版验收通过。
