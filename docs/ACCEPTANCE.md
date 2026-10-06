@@ -169,4 +169,16 @@ REQ-013 / AC-013：全部五款原创音效入包，在原生设置页选择、�
 
 本轮评分 **89/100**：需求 23/25（选择/试听/保存/入包均覆盖，未评估不同输出设备听感），正确性 23/25（资源错误和设置升级通过，真实系统静音开关未操作），测试 16/20（44 项通过及运行中 UI 检查，完整剪切 E2E 未重跑），架构 9/10（选择、播放与 AppModel 分离，无新依赖），代码 9/10（资源名白名单、缓存与释放、音效错误不打断 Finder），交付 9/10（源码、许可、安装包、音效源包与校验；无 Developer ID 公证及 Intel 实测）。仅作为明确标示的测试版交付。
 
+### beta.5 公开发布记录
+
+源码 `ac871e0` 及标签 `v0.1.0-beta.5` 已原子推送至 origin。Release 非草稿、明确标记 prerelease，四项资产全部 uploaded。重新下载后 DMG、App ZIP、音效 ZIP 的 SHA-256 均 OK，下载校验文件与本地一致。
+
+| 资产 | 大小（字节） | SHA-256 |
+|---|---:|---|
+| Wayfinder-v0.1.0-beta.5-macOS-arm64.dmg | 657850 | 06b80b6127a9f512e6c759d16135c7e4f7629f4215cd95b1647c55972d533c9d |
+| Wayfinder-v0.1.0-beta.5-macOS-arm64.zip | 396134 | 32c40e54a1f486d8da2a3e291514544655d1a25a549196496f038df2a150ccbc |
+| Wayfinder-v0.1.0-beta.5-Cut-Sounds.zip | 183340 | 8c88c637a0f13710444debdf81057ca3ff375ec8d571d4d7dbee1f1cf67c2463 |
+
+本机 `/Applications/Wayfinder.app` 已更新至 build 5，主程序与发布构建字节一致。保留用户当前“干脆双击”选择及提示音、登录启动开关。只读验收镜像已卸载。发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.5
+
 本条验收提交不改变发布标签对应二进制。
