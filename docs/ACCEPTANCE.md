@@ -108,3 +108,5 @@ TC-037 / REQ-006：已推送源码 `04b483daa5584870ca13653b9524eb2a32323bfb`，
 本次功能范围证据评分 **87/100**：需求22/25、正确性22/25、测试16/20、架构9/10、代码与安全9/10、文档9/10。新功能核心与本机 Finder 交互已验证；扣分包括真实浅色/VoiceOver、网络卷/文件提供商/并发外部改动的端到端测试，以及整个 App 原有的剪切、终端 cwd 与重新登录验收缺口。单次模拟失败和回退已验证，不把多项移动称为原子事务。仍为 ad-hoc 测试版。
 
 对比旧版本，本轮开始前观察到用户安装的 beta.2 已显示“设备控制与数据访问已启用 / Finder 剪切已就绪”；更新新代码后授权可能再次因签名身份改变而失效。本轮未代用户更改系统权限，且新建文件夹功能不依赖辅助功能或 Finder 自动化权限。
+
+TC-050 / REQ-006：源码 `a884736809688a8151a24f40aa46a4c7b80ee5d9` 与标签 v0.1.0-beta.3 已推送。GitHub Release 为公开预发布（isDraft=false / isPrerelease=true），DMG、ZIP、SHA256SUMS 均 uploaded。重新下载 DMG/ZIP，校验文件两项均 OK。最终 App 已安装到 Applications，安装二进制与 dist 一致。发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.3 。本条验收提交不改变发布标签对应二进制。
