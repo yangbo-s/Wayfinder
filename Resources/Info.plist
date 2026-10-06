@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>Wayfinder</string>
+	<key>CFBundleIdentifier</key>
+	<string>local.wayfinder.mac</string>
+	<key>CFBundleName</key>
+	<string>Wayfinder</string>
+	<key>CFBundleDisplayName</key>
+	<string>Wayfinder</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Wayfinder 需要读取 Finder 当前文件夹，并让你选择的终端在该文件夹打开新窗口。</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Wayfinder Finder actions</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wayfinder</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

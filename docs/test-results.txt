@@ -1,0 +1,18 @@
+PASS cut moves only after fresh file copy
+PASS text clipboard cannot become move
+PASS clipboard replacement cancels move
+PASS paste validates before poll
+PASS cancel and disabled
+PASS repeat cut invalidates original
+PASS normal copy stays copy
+PASS invalid paths
+PASS symlink, Unicode, file parent, multi-copy
+PASS missing directory
+PASS empty and remote copy
+PASS URL special character roundtrip
+PASS URL rejects unknown actions and duplicate fields
+PASS custom args remain literal
+PASS actual zsh quoting without command substitution
+PASS AppleScript escaping
+PASS default terminal identifiers
+17 tests, 0 failures
