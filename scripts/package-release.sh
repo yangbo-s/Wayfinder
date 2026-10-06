@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-VERSION="${1:-v0.1.0-beta.5}"
+VERSION="${1:-v0.1.0-beta.6}"
 if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
-    printf 'Expected a version such as v0.1.0-beta.5\n' >&2
+    printf 'Expected a version such as v0.1.0-beta.6\n' >&2
     exit 1
 fi
 ./scripts/build.sh
@@ -28,7 +28,7 @@ Wayfinder 安装
 自动进入重命名需要辅助功能权限；未授权仍创建并选中，可手动按 Return。
 新建操作可在 Wayfinder 菜单栏中撤销最近一次；不等同于 Finder 的 Command+Z。
 登录启动和剪切提示音开关位于“权限与设置”。
-剪切音效提供五种原创声音，可在同一页选择、试听；选择会自动保存。
+剪切音效提供十四种原创声音，可在同一页选择、试听；选择会自动保存。
 音量跟随系统音效设置；系统关闭“播放用户界面音效”时，试听也保持静音。
 
 这是测试版，尚未使用 Apple Developer ID 签名及公证。
@@ -40,7 +40,7 @@ INSTALL
 hdiutil create -volname Wayfinder -srcfolder "$STAGING" -ov -format UDZO "dist/$NAME.dmg"
 ditto -c -k --keepParent dist/Wayfinder.app "dist/$NAME.zip"
 SOUNDS="Wayfinder-$VERSION-Cut-Sounds.zip"
-ditto -c -k --keepParent design/audio/cut-options "dist/$SOUNDS"
+ditto -c -k --keepParent design/audio "dist/$SOUNDS"
 (
     cd dist
     shasum -a 256 "$NAME.dmg" "$NAME.zip" "$SOUNDS" > SHA256SUMS.txt

@@ -36,11 +36,12 @@ PASS actual zsh quoting without command substitution
 PASS AppleScript escaping
 PASS default terminal identifiers
 37 tests, 0 failures
-PASS five distinct bundled sounds load, cache and honor system UI audio
+PASS fourteen distinct bundled sounds load, cache and honor system UI audio
+PASS all five beta.5 saved sound IDs still map to their original audio
 PASS missing and corrupt resources report errors
 PASS upgrade preserves mute and unknown selection uses the default
 PASS every sound selection persists across model recreation
 PASS muted cuts stay silent while explicit preview remains available
 PASS prepared cut plays selected sound once and toggle persists
 PASS audio failure reports status without stealing Finder focus
-7 sound integration tests, 0 failures
+8 sound integration tests, 0 failures

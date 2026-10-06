@@ -17,7 +17,7 @@ private final class RecordingPlayer: CutSoundPlaying {
         let directory = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
         let player = CutSoundPlayer(directory: directory)
         let choices = CutSoundChoice.allCases
-        precondition(choices.count == 5)
+        precondition(choices.count == 14)
         var ids = Set<SystemSoundID>()
         var files = Set<Data>()
         for choice in choices {
@@ -30,8 +30,16 @@ private final class RecordingPlayer: CutSoundPlaying {
             precondition(AudioServicesGetProperty(kAudioServicesPropertyIsUISound,
                 UInt32(MemoryLayout<SystemSoundID>.size), &sound, &size, &ui) == noErr && ui == 1)
         }
-        precondition(ids.count == 5 && files.count == 5)
-        print("PASS five distinct bundled sounds load, cache and honor system UI audio")
+        precondition(ids.count == 14 && files.count == 14)
+        print("PASS fourteen distinct bundled sounds load, cache and honor system UI audio")
+
+        let legacyFiles = ["crisp": "E-original-snip.wav", "metallic": "A-metallic-snip.wav",
+                           "paper": "B-paper-cut.wav", "soft": "C-soft-swipe.wav",
+                           "doubleTick": "D-double-tick.wav"]
+        for (savedValue, filename) in legacyFiles {
+            precondition(CutSoundChoice(savedValue: savedValue).filename == filename)
+        }
+        print("PASS all five beta.5 saved sound IDs still map to their original audio")
 
         let missing = CutSoundPlayer(directory: nil)
         do { _ = try missing.load(.crisp); fatalError("Missing resource must fail") }
@@ -63,17 +71,23 @@ private final class RecordingPlayer: CutSoundPlaying {
         }
         print("PASS every sound selection persists across model recreation")
 
-        model.cutSound = .paper
-        model.cut.didPrepareCut?()
-        precondition(recorder.played.isEmpty)
-        model.previewCutSound()
-        precondition(recorder.played == [.paper] && !model.playCutSound)
+        for choice in choices {
+            model.cutSound = choice
+            let previous = recorder.played
+            model.cut.didPrepareCut?()
+            precondition(recorder.played == previous)
+            model.previewCutSound()
+            precondition(recorder.played == previous + [choice] && !model.playCutSound)
+        }
         print("PASS muted cuts stay silent while explicit preview remains available")
 
         model.playCutSound = true
-        model.cutSound = .soft
-        model.cut.didPrepareCut?()
-        precondition(recorder.played == [.paper, .soft])
+        for choice in choices {
+            model.cutSound = choice
+            let previous = recorder.played
+            model.cut.didPrepareCut?()
+            precondition(recorder.played == previous + [choice])
+        }
         precondition(AppModel(defaults: defaults, soundPlayer: recorder).playCutSound)
         print("PASS prepared cut plays selected sound once and toggle persists")
 
@@ -83,6 +97,6 @@ private final class RecordingPlayer: CutSoundPlaying {
         model.cut.didPrepareCut?()
         precondition(model.noticeIsError && model.notice != nil && !openedSettings)
         print("PASS audio failure reports status without stealing Finder focus")
-        print("7 sound integration tests, 0 failures")
+        print("8 sound integration tests, 0 failures")
     }
 }

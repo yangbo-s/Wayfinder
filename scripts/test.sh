@@ -19,4 +19,10 @@ done
 xcrun swiftc -swift-version 5 -I "$TEST_DIR" -L "$TEST_DIR" \
     -lWayfinderCore -Xlinker -rpath -Xlinker "$TEST_DIR" \
     "${APP_SOURCES[@]}" Tests/AppTests/CutSoundTests.swift -o "$TEST_DIR/CutSoundTests"
-"$TEST_DIR/CutSoundTests" "${SOUND_RESOURCES:-$PWD/design/audio/cut-options}"
+if [[ -z "${SOUND_RESOURCES:-}" ]]; then
+    SOUND_RESOURCES="$TEST_DIR/CutSounds"
+    mkdir -p "$SOUND_RESOURCES"
+    cp design/audio/cut-options/[ABCDE]-*.wav "$SOUND_RESOURCES/"
+    cp design/audio/crisp-cut-options/[FGHIJKLMN]-*.wav "$SOUND_RESOURCES/"
+fi
+"$TEST_DIR/CutSoundTests" "$SOUND_RESOURCES"

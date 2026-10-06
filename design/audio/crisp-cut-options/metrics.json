@@ -1,0 +1,65 @@
+[
+  {
+    "file": "F-clean-click.wav",
+    "duration_seconds": 0.075,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 9.23,
+    "noise_layer": false
+  },
+  {
+    "file": "G-tight-double.wav",
+    "duration_seconds": 0.105,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 34.5,
+    "noise_layer": false
+  },
+  {
+    "file": "H-mechanical-snap.wav",
+    "duration_seconds": 0.085,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 11.88,
+    "noise_layer": false
+  },
+  {
+    "file": "I-fast-light-heavy.wav",
+    "duration_seconds": 0.095,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 25.75,
+    "noise_layer": false
+  },
+  {
+    "file": "J-spaced-light-heavy.wav",
+    "duration_seconds": 0.125,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 55.04,
+    "noise_layer": false
+  },
+  {
+    "file": "K-tight-mechanical-pair.wav",
+    "duration_seconds": 0.11,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 38.71,
+    "noise_layer": false
+  },
+  {
+    "file": "L-deep-mechanical-pair.wav",
+    "duration_seconds": 0.135,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 57.81,
+    "noise_layer": false
+  },
+  {
+    "file": "M-close-mechanical-pair.wav",
+    "duration_seconds": 0.09,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 24.71,
+    "noise_layer": false
+  },
+  {
+    "file": "N-20ms-mechanical-pair.wav",
+    "duration_seconds": 0.1,
+    "peak_dbfs": -4.44,
+    "energy_99_percent_end_ms": 31.71,
+    "noise_layer": false
+  }
+]

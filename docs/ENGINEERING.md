@@ -90,3 +90,13 @@ IN-003 / OUT-003：选择以稳定字符串 crisp / metallic / paper / soft / do
 MOD-008 / ADR-006：CutSoundChoice 管理稳定名称与文件映射；CutSoundPlayer 通过公开 AudioToolbox 加载并缓存 SystemSoundID，析构时释放。相比 NSSound 系统提示音，内置原创 WAV 可准确保留用户已试听的声音，System Sound Services 默认 IsUISound=1 尊重系统开关；不新增运行时依赖。音频与生成器随 MIT 许可发布，未使用 Command X 音频。
 
 验收顺序：逐字节保留原五个试听文件 → 音频加载/错误/设置持久化/开关集成测试 → 主 App 与扩展构建 → 实际设置菜单和试听检查 → DMG/ZIP/单独音效包及重新下载校验。TC-059–065 为音效集成测试；TC-066 为实际 UI，TC-067 为发布资源完整性。REQ-006 延续用户授权，推送 main 并发布 v0.1.0-beta.5 测试版。
+
+## beta.6 十四款剪切音效
+
+REQ-014 / AC-014：将用户认可的 F–N 九款干脆音效加入现有选择器与试听，共十四款；原 A–E 五款及其稳定 ID、默认选择、静音设置完全保留。所有 WAV 与用户试听文件逐字节一致。机械双击名称注明 13 / 20 / 27 / 46 ms，便于区分。沿用 MOD-008 / ADR-006，不更换播放器或添加依赖。
+
+IN-004 / OUT-004：cutSound 新增 cleanClick / tightDouble / mechanicalSnap / fastLightHeavy / spacedLightHeavy / tightMechanical / deepMechanical / closeMechanical / mediumMechanical 九个字符串，映射到 F–N 的 WAV 文件。枚举决定菜单顺序；预览和剪切均使用已保存的选择。缺失/损坏资源与未知 ID 仍遵循 IN-003 的错误及回退契约。
+
+CON-002 / OOS-002：保留原始音频，不重新合成或归一化；不改剪切、权限、Finder 和终端逻辑。默认音效继续为轻快剪切，不替用户更改偏好。仅发布 Apple Silicon 测试包，不宣称 Intel、公证或全系统兼容。
+
+实施及门禁：扩展枚举 → 构建及测试资源同时收集两组音效 → 实际十四款加载、旧设置兼容、逐项试听/剪切选择与持久化测试 → App、DMG、ZIP、包含两组源文件及 MIT 许可的音效包 → 设置 UI 检查 → 推送 main/tag 并发布 beta.6 → 重新下载全部资产校验。TC-068 覆盖旧 ID 兼容及十四项选择行为，TC-069 为设置菜单检查，TC-070 为十四款资源打包与下载验证。REQ-006 的发布授权持续适用。

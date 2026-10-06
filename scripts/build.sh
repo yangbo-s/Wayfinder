@@ -16,6 +16,7 @@ cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp LICENSE "$APP/Contents/Resources/LICENSE.txt"
 mkdir -p "$APP/Contents/Resources/CutSounds"
 cp design/audio/cut-options/[ABCDE]-*.wav "$APP/Contents/Resources/CutSounds/"
+cp design/audio/crisp-cut-options/[FGHIJKLMN]-*.wav "$APP/Contents/Resources/CutSounds/"
 cp Resources/Extension-Info.plist "$EXT/Contents/Info.plist"
 xcrun swiftc -swift-version 5 -O -parse-as-library -module-name WayfinderFinder \
     -target "$ARCH-apple-macos13.0" -sdk "$(xcrun --show-sdk-path)" \
