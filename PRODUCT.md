@@ -18,3 +18,6 @@ Local-first, no network dependency. User explicitly enables Accessibility and th
 
 ## Folder actions and toolbar (beta.3–beta.4)
 The user explicitly chose a real Finder toolbar menu for terminal, path copying and folder creation. Context menus always offer an empty folder regardless of selection, plus single-item and multi-item grouping. All menu actions use small native icons; terminal wording is 在当前目录下打开终端. Folder creation immediately creates `untitled folder` with a numbered suffix on collision, then selects it and starts native Finder inline rename. There is no naming dialog. Empty, single-item and multi-item actions share this flow. Existing files are preserved; session-local undo follows a renamed folder within the same parent by filesystem identity.
+
+## Cut audio (beta.5)
+The user chose to ship all five original procedural sound effects, including the initial 105 ms preview. Settings offers sound selection and explicit preview, with persistent selection and the existing automatic-sound toggle. Default is 轻快剪切. Muting automatic cut feedback does not prevent intentional previews; both respect macOS system UI sound settings. No Command X sound assets are distributed.

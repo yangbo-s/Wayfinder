@@ -11,6 +11,7 @@ final class AppModel: ObservableObject {
     @Published var customArguments: String { didSet { defaults.set(customArguments, forKey: "customArguments") } }
     @Published var cutEnabled: Bool { didSet { defaults.set(cutEnabled, forKey: "cutEnabled"); cut.enabled = cutEnabled; refresh() } }
     @Published var playCutSound: Bool { didSet { defaults.set(playCutSound, forKey: "playCutSound") } }
+    @Published var cutSound: CutSoundChoice { didSet { defaults.set(cutSound.rawValue, forKey: "cutSound") } }
     @Published var trusted = false
     @Published var extensionEnabled = false
     @Published var listenerRunning = false
@@ -25,8 +26,9 @@ final class AppModel: ObservableObject {
     private let folderQueue = DispatchQueue(label: "local.wayfinder.folders", qos: .userInitiated)
     var canUndoFolder: Bool { lastCreatedFolder != nil && !folderBusy }
     let cut = CutController()
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults
     private let launcher = TerminalLauncher()
+    private let soundPlayer: CutSoundPlaying
     private var timer: Timer?
     var showSettings: (() -> Void)?
     var keyboardReadiness: KeyboardReadiness {
@@ -36,18 +38,29 @@ final class AppModel: ObservableObject {
         ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 ? "设备控制与数据访问" : "辅助功能"
     }
 
-    init() {
+    init(defaults: UserDefaults = .standard, soundPlayer: CutSoundPlaying = CutSoundPlayer()) {
+        self.defaults = defaults
+        self.soundPlayer = soundPlayer
         terminal = TerminalChoice(rawValue: defaults.string(forKey: "terminal") ?? "") ?? .terminal
         customApp = defaults.string(forKey: "customApp") ?? ""
         customArguments = defaults.string(forKey: "customArguments") ?? "[\"--working-directory={path}\"]"
         cutEnabled = defaults.object(forKey: "cutEnabled") as? Bool ?? true
         playCutSound = defaults.object(forKey: "playCutSound") as? Bool ?? true
+        cutSound = CutSoundChoice(savedValue: defaults.string(forKey: "cutSound"))
         cut.enabled = cutEnabled
         cut.didPrepareCut = { [weak self] in
-            guard self?.playCutSound == true else { return }
-            NSSound(named: NSSound.Name("Tink"))?.play()
+            guard let self, self.playCutSound else { return }
+            self.playSelectedCutSound()
         }
         cut.statusChanged = { [weak self] value in if self?.cutStatus != value { self?.cutStatus = value } }
+    }
+    func previewCutSound() { playSelectedCutSound() }
+    private func playSelectedCutSound() {
+        do { try soundPlayer.play(cutSound) }
+        catch {
+            // A missing sound must not interrupt Finder or cancel a prepared file move.
+            noticeIsError = true; notice = error.localizedDescription
+        }
     }
     func start() {
         refresh()

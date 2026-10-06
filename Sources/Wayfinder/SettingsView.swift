@@ -154,9 +154,21 @@ struct SettingsView: View {
             Toggle("启用 Finder 文件剪切", isOn: $model.cutEnabled).toggleStyle(.switch)
             Text("只转换 Finder 文件区域的快捷键。重命名、搜索框和其他应用保持原有行为。按 Esc 或复制其他内容可取消剪切。")
                 .font(.system(size: 12)).foregroundStyle(.secondary)
-            Toggle("剪切成功时播放提示音", isOn: $model.playCutSound).toggleStyle(.switch)
-            Text("确认文件已进入待移动状态后，播放一次轻提示音。")
-                .font(.system(size: 12)).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle("剪切成功时播放提示音", isOn: $model.playCutSound).toggleStyle(.switch)
+                HStack(spacing: 12) {
+                    Picker("剪切音效", selection: $model.cutSound) {
+                        ForEach(CutSoundChoice.allCases) { sound in
+                            Text(sound.name).tag(sound)
+                        }
+                    }
+                    Button(action: model.previewCutSound) {
+                        Label("试听", systemImage: "speaker.wave.2")
+                    }.accessibilityLabel("试听\(model.cutSound.name)")
+                }
+                Text("选择自动保存，剪切成功后播放一次。关闭提示音后仍可试听；音量跟随系统音效设置。")
+                    .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
             Divider()
             accessibilityStatus
             permissionRow("Finder 扩展", detail: "在系统设置中勾选 Wayfinder Finder", enabled: model.extensionEnabled, action: model.manageExtension)

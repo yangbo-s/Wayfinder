@@ -1,0 +1,32 @@
+[
+  {
+    "file": "E-original-snip.wav",
+    "duration_seconds": 0.105,
+    "peak_dbfs": -9.7,
+    "rms_dbfs": -26.83
+  },
+  {
+    "file": "A-metallic-snip.wav",
+    "duration_seconds": 0.155,
+    "peak_dbfs": -6.34,
+    "rms_dbfs": -22.5
+  },
+  {
+    "file": "B-paper-cut.wav",
+    "duration_seconds": 0.215,
+    "peak_dbfs": -5.65,
+    "rms_dbfs": -21.94
+  },
+  {
+    "file": "C-soft-swipe.wav",
+    "duration_seconds": 0.17,
+    "peak_dbfs": -7.76,
+    "rms_dbfs": -23.74
+  },
+  {
+    "file": "D-double-tick.wav",
+    "duration_seconds": 0.125,
+    "peak_dbfs": -3.38,
+    "rms_dbfs": -23.1
+  }
+]

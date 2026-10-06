@@ -12,3 +12,11 @@ xcrun swiftc -swift-version 5 -D STANDALONE_TESTS -I "$TEST_DIR" -L "$TEST_DIR" 
     -lWayfinderCore -Xlinker -rpath -Xlinker "$TEST_DIR" \
     Tests/WayfinderCoreTests/*.swift -o "$TEST_DIR/CoreTests"
 "$TEST_DIR/CoreTests"
+APP_SOURCES=()
+for source in Sources/Wayfinder/*.swift; do
+    [[ "$source" == "Sources/Wayfinder/Main.swift" ]] || APP_SOURCES+=("$source")
+done
+xcrun swiftc -swift-version 5 -I "$TEST_DIR" -L "$TEST_DIR" \
+    -lWayfinderCore -Xlinker -rpath -Xlinker "$TEST_DIR" \
+    "${APP_SOURCES[@]}" Tests/AppTests/CutSoundTests.swift -o "$TEST_DIR/CutSoundTests"
+"$TEST_DIR/CutSoundTests" "${SOUND_RESOURCES:-$PWD/design/audio/cut-options}"

@@ -4,7 +4,7 @@
 
 Wayfinder is a lightweight, native macOS Finder companion for cut & paste, opening your preferred terminal, and copying resolved filesystem paths.
 
-[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.4) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
+[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.5) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
 
 | 功能 | 行为 |
 |---|---|
@@ -14,17 +14,18 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 | 工具栏快捷菜单 | 打开终端、复制路径、新建文件夹，菜单项均带小图标 |
 | 新建文件夹 | 随时新建空文件夹，或将单个 / 多个所选项目放入新文件夹 |
 | 登录时启动 | 可选，后台驻留菜单栏 |
-| 剪切提示音 | 成功进入待移动状态时提示，可关闭 |
+| 剪切提示音 | 五款原创音效可选择、试听，成功进入待移动状态后播放，可关闭 |
 
 无需账号，不联网，无第三方运行时依赖。界面为中文，跟随系统深浅色。
 
 ## 下载
 
-当前版本为 **v0.1.0-beta.4**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
+当前版本为 **v0.1.0-beta.5**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
 
-- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.4/Wayfinder-v0.1.0-beta.4-macOS-arm64.dmg)：打开后拖到 Applications。
-- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.4/Wayfinder-v0.1.0-beta.4-macOS-arm64.zip)：解压后移动 App。
-- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.4/SHA256SUMS.txt)。
+- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.5/Wayfinder-v0.1.0-beta.5-macOS-arm64.dmg)：打开后拖到 Applications。
+- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.5/Wayfinder-v0.1.0-beta.5-macOS-arm64.zip)：解压后移动 App。
+- [下载五款原创音效与生成代码](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.5/Wayfinder-v0.1.0-beta.5-Cut-Sounds.zip)：音频也已内置在 App 中，无需单独安装。
+- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.5/SHA256SUMS.txt)。
 
 **测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。33 项核心测试通过；Finder 的空文件夹、单项/多项分组与撤销已实测；右键路径复制和终端请求延续 beta.2 的验证。完整快捷键剪切、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
 
@@ -38,7 +39,7 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 
 普通启动或再次打开 Wayfinder.app 始终显示设置，不会自动打开终端。设置页品牌图标与 App 图标使用同一资源，菜单栏及 Finder 工具栏使用清晰的单色“文件夹＋转向箭头”图标符号。
 
-登录时启动可在「权限与设置」中开关；登录启动只驻留菜单栏。剪切成功提示音默认开启，可在同一页关闭。
+登录时启动可在「权限与设置」中开关；登录启动只驻留菜单栏。剪切成功提示音默认开启，可在同一页关闭，并从轻快剪切、金属咔嚓、剪纸摩擦、柔和短划、干脆双击中选择和试听。选择会自动保存；关闭自动提示仍可主动试听。音量跟随系统音效设置，系统关闭“播放用户界面音效”时也会静音。
 
 ### 剪切文件
 
@@ -91,7 +92,7 @@ open dist/Wayfinder.app --args --settings
 
 脚本默认使用 `/Library/Developer/CommandLineTools`，不修改全局 xcode-select。如已配置完整 Xcode，可显式传入 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`。`ARCH=arm64` 或 `ARCH=x86_64` 选择构建架构；默认为本机架构。
 
-生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.4` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
+生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.5` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
 
 源码可用 Xcode 打开 `Package.swift`；完整宿主 + 扩展打包由 `scripts/build.sh` 执行。直接运行 Swift Package 的可执行文件不包含 App 元数据和 Finder 扩展。
 

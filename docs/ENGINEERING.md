@@ -80,3 +80,13 @@ MOD-007：FinderRename 只负责揭示、选择校验和进入原生编辑；文
 TC-051–054：自动名称、并发同名、空/单/多改名后撤销、目录内容/父目录变化保护的真实文件测试。TC-055：Finder 空、单、多入口立即创建且 AX 编辑器出现；TC-056：缺少权限/用户切换时不误发键；TC-057：新版包签名和下载校验。正式发布前记录实际结果及未运行项。
 
 依据：[NSWorkspace 揭示 API](https://developer.apple.com/documentation/appkit/nsworkspace/activatefileviewerselecting(_:)) 与 [Apple Finder 重命名说明](https://support.apple.com/en-mt/guide/mac-help/mchlp1144/mac)。
+
+## beta.5 五款剪切音效
+
+REQ-013 / AC-013：内置本会话制作的全部五款原创音效（最早轻快剪切及 A–D），在“权限与设置”中选择、主动试听、自动保存。默认轻快剪切；未知旧值回到默认。保留已有静音设置，关闭自动提示仍可主动试听。成功准备剪切后仅播放当前选择一次。使用系统音效音量和界面音效开关，资源缺失不回退为 Tink、不打断文件移动。
+
+IN-003 / OUT-003：选择以稳定字符串 crisp / metallic / paper / soft / doubleTick 保存到 cutSound，playCutSound 布尔设置保持兼容。五份 mono PCM16 / 48 kHz WAV 从 App Resources/CutSounds 读取，只允许枚举映射的资源名。出错写入设置页状态，不在 Finder 前弹窗；试听与实际剪切共享播放器。
+
+MOD-008 / ADR-006：CutSoundChoice 管理稳定名称与文件映射；CutSoundPlayer 通过公开 AudioToolbox 加载并缓存 SystemSoundID，析构时释放。相比 NSSound 系统提示音，内置原创 WAV 可准确保留用户已试听的声音，System Sound Services 默认 IsUISound=1 尊重系统开关；不新增运行时依赖。音频与生成器随 MIT 许可发布，未使用 Command X 音频。
+
+验收顺序：逐字节保留原五个试听文件 → 音频加载/错误/设置持久化/开关集成测试 → 主 App 与扩展构建 → 实际设置菜单和试听检查 → DMG/ZIP/单独音效包及重新下载校验。TC-059–065 为音效集成测试；TC-066 为实际 UI，TC-067 为发布资源完整性。REQ-006 延续用户授权，推送 main 并发布 v0.1.0-beta.5 测试版。
