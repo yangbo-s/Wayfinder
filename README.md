@@ -4,14 +4,14 @@
 
 Wayfinder is a lightweight, native macOS Finder companion for cut & paste, opening your preferred terminal, and copying resolved filesystem paths.
 
-[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.1) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
+[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.2) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
 
 | 功能 | 行为 |
 |---|---|
 | ⌘X / ⌘V 文件剪切 | 使用 Finder 原生移动流程，保留冲突提示和撤销 |
 | 在当前位置打开终端 | 默认 Terminal，可选 Ghostty、iTerm2、Warp 或自定义 App |
 | Finder 右键复制路径 | 支持当前目录、选中项目与多选，解析符号链接 |
-| 工具栏快捷入口 | 按住 ⌘ 将 App 拖入 Finder 工具栏，一次点击打开终端 |
+| 工具栏快捷入口 | 添加 Wayfinder Finder 扩展按钮，一次点击打开终端 |
 | 登录时启动 | 可选，后台驻留菜单栏 |
 | 剪切提示音 | 成功进入待移动状态时提示，可关闭 |
 
@@ -19,13 +19,13 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 
 ## 下载
 
-首个版本为 **v0.1.0-beta.1**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
+当前版本为 **v0.1.0-beta.2**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
 
-- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.1/Wayfinder-v0.1.0-beta.1-macOS-arm64.dmg)：打开后拖到 Applications。
-- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.1/Wayfinder-v0.1.0-beta.1-macOS-arm64.zip)：解压后移动 App。
-- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.1/SHA256SUMS.txt)。
+- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.2/Wayfinder-v0.1.0-beta.2-macOS-arm64.dmg)：打开后拖到 Applications。
+- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.2/Wayfinder-v0.1.0-beta.2-macOS-arm64.zip)：解压后移动 App。
+- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.2/SHA256SUMS.txt)。
 
-**测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。17 项核心测试通过；Finder 的真实移动、扩展右键、终端实开和重新登录仍需要在授权后完成验收，详见[验收记录](docs/ACCEPTANCE.md)。
+**测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。25 项核心测试通过；Finder 右键文件、符号链接及当前文件夹复制已实测，工具栏点击到 Ghostty 脚本返回成功；真实移动、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
 
 ## 安装与使用
 
@@ -34,6 +34,8 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 3. 点击「Finder 扩展 → 去启用」，在系统设置中启用 **Wayfinder Finder**。新版 macOS 也可在「通用 → 登录项与扩展 → Finder」中找到；若未刷新，关闭并重新打开 Finder 窗口。
 4. 第一次打开终端时，同意 macOS 提示的 Finder / 终端自动化权限。
 5. 如果正在用 Command X，请先退出 Command X，避免同时改写同一快捷键。
+
+普通启动或再次打开 Wayfinder.app 始终显示设置，不会自动打开终端。设置页品牌图标与 App 图标使用同一资源，菜单栏及 Finder 工具栏使用清晰的单色“文件夹＋转向箭头”图标符号。
 
 登录时启动可在「权限与设置」中开关；登录启动只驻留菜单栏。剪切成功提示音默认开启，可在同一页关闭。
 
@@ -47,7 +49,7 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 
 默认使用**系统 Terminal**。设置 → 终端可选 Ghostty、iTerm2、Warp 或自定义终端。
 
-- **工具栏单击**：按住 `⌘`，将 Wayfinder.app 拖到 Finder 工具栏。单击即在当前 Finder 文件夹打开终端。初次运行先显示设置，请先完成安装。
+- **工具栏单击**：启用 Finder 扩展后，在 Finder 工具栏右键 → 自定工具栏，加入 **Wayfinder** 文件夹按钮。单击即在当前 Finder 文件夹打开终端。普通打开 App 则显示设置。
 - **右键**：「在这里打开终端」。点文件会打开其父目录；点文件夹会打开该文件夹；多选时采用 Finder 返回的第一个项目。
 - **菜单栏**：Wayfinder →「在当前位置打开…」。设置也可从菜单栏进入。
 
@@ -73,7 +75,7 @@ open dist/Wayfinder.app --args --settings
 
 脚本默认使用 `/Library/Developer/CommandLineTools`，不修改全局 xcode-select。如已配置完整 Xcode，可显式传入 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`。`ARCH=arm64` 或 `ARCH=x86_64` 选择构建架构；默认为本机架构。
 
-生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.1` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
+生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.2` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
 
 源码可用 Xcode 打开 `Package.swift`；完整宿主 + 扩展打包由 `scripts/build.sh` 执行。直接运行 Swift Package 的可执行文件不包含 App 元数据和 Finder 扩展。
 
@@ -87,7 +89,7 @@ open dist/Wayfinder.app --args --settings
 
 ## 权限、故障恢复与卸载
 
-- **快捷键不工作**：确认辅助功能授权（macOS 27 中改名为「设备控制与数据访问」），退出 Command X，重新打开 Wayfinder；若重新构建导致系统签名信任变化，在辅助功能列表移除旧项，再添加当前 App。
+- **快捷键不工作**：先查看分别显示的系统授权与快捷键监听状态，退出 Command X，点击“重新检查 / 重试监听”，必要时重启 App。macOS 27 将辅助功能改名为「设备控制与数据访问」。本测试版采用 ad-hoc 签名，更新会改变代码身份，原有开关可能仍显示开启但对新版无效；此时在系统权限列表移除旧 Wayfinder，再添加 `/Applications/Wayfinder.app` 并开启。应用不会代替用户修改系统授权。
 - **右键无菜单**：先把 App 安装在固定位置，运行一次，再启用 Finder 扩展。检查当前目录是否为真实文件夹。必要时退出并重新登录；不会自动杀死 Finder。
 - **自动化被拒绝**：系统设置 → 隐私与安全性 → 自动化，允许 Wayfinder 控制 Finder 和所选终端。
 - **Ghostty 报脚本错误**：更新 Ghostty，或临时切换 Terminal。

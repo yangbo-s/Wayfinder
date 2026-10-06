@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Carbon
+import WayfinderCore
 
 @main
 enum WayfinderMain {
@@ -18,14 +19,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var status: NSStatusItem!
     private var window: NSWindow?
     private var handledExternalAction = false
-    private var launched = Date()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         model.showSettings = { [weak self] in self?.showSettings() }
         model.start()
         setupApplicationMenu()
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        status.button?.image = NSImage(systemSymbolName: "arrow.turn.down.right", accessibilityDescription: "Wayfinder")
+        status.button?.image = WayfinderSymbol.image()
         status.button?.toolTip = "Wayfinder · Finder 工具"
         let menu = NSMenu(); menu.delegate = self; status.menu = menu
         let event = NSAppleEventManager.shared().currentAppleEvent
@@ -33,10 +33,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let firstLaunch = !UserDefaults.standard.bool(forKey: "hasLaunched")
         UserDefaults.standard.set(true, forKey: "hasLaunched")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let self, !self.handledExternalAction else { return }
-            if isLoginLaunch || CommandLine.arguments.contains("--background") { return }
-            if firstLaunch || CommandLine.arguments.contains("--settings") { self.showSettings() }
-            else { self.model.openTerminal() }
+            guard let self else { return }
+            self.performLaunchAction(LaunchPolicy.initial(hasLaunchedBefore: !firstLaunch,
+                isLoginLaunch: isLoginLaunch, arguments: CommandLine.arguments,
+                handledExternalAction: self.handledExternalAction))
         }
     }
     func application(_ application: NSApplication, open urls: [URL]) {
@@ -44,15 +44,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         for url in urls { model.handleURL(url) }
     }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        guard Date().timeIntervalSince(launched) > 1 else { return false }
-        model.openTerminal()
+        performLaunchAction(LaunchPolicy.reopen())
         return false
     }
+    private func performLaunchAction(_ action: LaunchAction) {
+        switch action {
+        case .showSettings: showSettings()
+        case .stayInBackground: break
+        }
+    }
+    func applicationDidBecomeActive(_ notification: Notification) { model.refresh() }
     func applicationWillTerminate(_ notification: Notification) { model.cut.stop() }
     func menuWillOpen(_ menu: NSMenu) {
         menu.removeAllItems()
         let statusText = model.cutStatus.isEmpty
-            ? (model.trusted ? (model.cutEnabled ? "Finder 剪切已启用" : "Finder 剪切已暂停") : "剪切需要辅助功能权限")
+            ? model.keyboardReadiness.title
             : model.cutStatus
         let summary = menu.addItem(withTitle: statusText, action: nil, keyEquivalent: ""); summary.isEnabled = false
         menu.addItem(.separator())

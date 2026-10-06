@@ -14,21 +14,29 @@ final class CutController {
     private var remappedKey: Int64?
     var isRunning: Bool { tap.map { CGEvent.tapIsEnabled(tap: $0) } ?? false }
 
-    func start() {
-        guard tap == nil, AXIsProcessTrusted() else { return }
+    func start(accessGranted: Bool) {
+        guard accessGranted else { stop(); return }
+        if let tap {
+            if CFMachPortIsValid(tap) {
+                CGEvent.tapEnable(tap: tap, enable: true)
+                if isRunning { return }
+            }
+            stop()
+        }
         let mask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValue)
         guard let port = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
             options: .defaultTap, eventsOfInterest: CGEventMask(mask), callback: { _, type, event, context in
                 guard let context else { return Unmanaged.passUnretained(event) }
                 return Unmanaged<CutController>.fromOpaque(context).takeUnretainedValue().handle(type, event)
             }, userInfo: Unmanaged.passUnretained(self).toOpaque()) else {
-            statusChanged?("快捷键监听未启动，请检查辅助功能权限后重新打开应用。")
+            statusChanged?("已获得辅助功能访问，但系统未启动快捷键监听。请点击“重试监听”，或重新启动 Wayfinder。")
             return
         }
         tap = port
         source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, port, 0)
         if let source { CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes) }
         CGEvent.tapEnable(tap: port, enable: true)
+        statusChanged?("")
         poll = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in self?.observeClipboard() }
     }
 

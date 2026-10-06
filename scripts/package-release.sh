@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-VERSION="${1:-v0.1.0-beta.1}"
+VERSION="${1:-v0.1.0-beta.2}"
 if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
-    printf 'Expected a version such as v0.1.0-beta.1\n' >&2
+    printf 'Expected a version such as v0.1.0-beta.2\n' >&2
     exit 1
 fi
 ./scripts/build.sh
@@ -21,7 +21,9 @@ Wayfinder 安装
 第一次使用终端时允许 Finder / 终端自动化。使用剪切前退出 Command X，避免冲突。
 
 默认终端为系统 Terminal，可在设置中切换 Ghostty、iTerm2、Warp 或自定义终端。
-按住 Command 将 App 拖入 Finder 工具栏，可单击在当前目录打开终端。
+在 Finder 工具栏右键选择“自定工具栏”，加入 Wayfinder 文件夹按钮。
+单击该扩展按钮在当前目录打开终端；普通打开 App 始终显示设置。
+右键文件或文件夹空白处，可以复制实际路径。
 登录启动和剪切提示音开关位于“权限与设置”。
 
 这是测试版，尚未使用 Apple Developer ID 签名及公证。

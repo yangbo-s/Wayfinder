@@ -3,6 +3,14 @@ import Foundation
     static func main() {
         let suite = CoreTests()
         let tests: [(String, () throws -> Void)] = [
+            ("ordinary launch always shows settings", suite.testOrdinaryLaunchAlwaysShowsSettings),
+            ("reopen shows settings", suite.testReopenShowsSettings),
+            ("background and login launch stay quiet", suite.testBackgroundAndLoginLaunchStayQuiet),
+            ("external request does not show settings", suite.testExternalTerminalRequestDoesNotAlsoShowSettings),
+            ("permission and listener are distinct", suite.testGrantedPermissionIsDistinctFromListenerFailure),
+            ("Finder target ignores selected child", suite.testFinderCurrentFolderDoesNotFollowSelectedChild),
+            ("Finder empty and mixed selections", suite.testFinderContextHandlesEmptyAndMixedSelections),
+            ("Finder errors validate known reasons", suite.testFinderErrorsAcceptOnlyKnownReasons),
             ("cut moves only after fresh file copy", suite.testCutMovesOnlyAfterFreshFileCopy),
             ("text clipboard cannot become move", suite.testTextClipboardCannotBecomePendingMove),
             ("clipboard replacement cancels move", suite.testReplacingClipboardCancelsMove),

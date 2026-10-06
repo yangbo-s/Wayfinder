@@ -1,3 +1,11 @@
+PASS ordinary launch always shows settings
+PASS reopen shows settings
+PASS background and login launch stay quiet
+PASS external request does not show settings
+PASS permission and listener are distinct
+PASS Finder target ignores selected child
+PASS Finder empty and mixed selections
+PASS Finder errors validate known reasons
 PASS cut moves only after fresh file copy
 PASS text clipboard cannot become move
 PASS clipboard replacement cancels move
@@ -15,4 +23,4 @@ PASS custom args remain literal
 PASS actual zsh quoting without command substitution
 PASS AppleScript escaping
 PASS default terminal identifiers
-17 tests, 0 failures
+25 tests, 0 failures

@@ -14,7 +14,8 @@ struct SettingsView: View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 22) {
                 HStack(spacing: 10) {
-                    Image(systemName: "arrow.turn.down.right").font(.system(size: 23, weight: .semibold)).foregroundStyle(Color.accentColor)
+                    Image(nsImage: NSApplication.shared.applicationIconImage)
+                        .resizable().frame(width: 34, height: 34).accessibilityHidden(true)
                     Text("Wayfinder").font(.system(size: 17, weight: .semibold))
                 }.padding(.top, 14).padding(.horizontal, 8)
                 VStack(spacing: 5) {
@@ -30,7 +31,7 @@ struct SettingsView: View {
                 Spacer()
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Finder，顺手一点。").font(.system(size: 12))
-                    Text("Wayfinder \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0") · 本地运行").font(.system(size: 11)).foregroundStyle(.secondary)
+                    Text("Wayfinder \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "2")) · 本地运行").font(.system(size: 11)).foregroundStyle(.secondary)
                 }.padding(.horizontal, 8).padding(.bottom, 10)
             }.padding(16).frame(width: 190).background(Color(nsColor: .controlBackgroundColor))
             Divider()
@@ -71,7 +72,7 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 feature("剪切文件", detail: "选中文件按 ⌘X，在目标文件夹按 ⌘V。", symbol: "scissors", trailing: "⌘X  →  ⌘V")
                 Divider().padding(.leading, 36)
-                feature("在这里打开终端", detail: "右键打开，或将 App 拖入 Finder 工具栏。", symbol: "terminal", trailing: model.terminal.name)
+                feature("在这里打开终端", detail: "右键打开，或点击 Finder 扩展工具栏按钮。", symbol: "terminal", trailing: model.terminal.name)
                 Divider().padding(.leading, 36)
                 feature("复制实际路径", detail: "右键文件或空白处，复制完整绝对路径。", symbol: "link", trailing: "/path")
             }
@@ -84,7 +85,7 @@ struct SettingsView: View {
             }
             VStack(alignment: .leading, spacing: 14) {
                 Text("准备好 Finder").font(.headline)
-                permissionRow("辅助功能", detail: "用于 Finder 中的 ⌘X / ⌘V", enabled: model.trusted && model.listenerRunning, action: model.requestAccessibility)
+                accessibilityStatus
                 permissionRow("Finder 扩展", detail: "用于右键菜单与工具栏菜单", enabled: model.extensionEnabled, action: model.manageExtension)
             }.padding(18).background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
             HStack {
@@ -131,7 +132,7 @@ struct SettingsView: View {
             Divider()
             VStack(alignment: .leading, spacing: 12) {
                 Label("工具栏单击打开", systemImage: "cursorarrow.click").font(.headline)
-                Text("按住 ⌘，将 Wayfinder.app 从应用程序文件夹拖到 Finder 工具栏。之后单击图标，就会在当前文件夹打开终端。")
+                Text("启用 Finder 扩展后，在 Finder 工具栏右键选择“自定工具栏”，加入 Wayfinder 文件夹按钮。单击按钮即可打开当前文件夹的终端。普通打开 Wayfinder.app 始终显示设置。")
                     .font(.system(size: 13)).fixedSize(horizontal: false, vertical: true)
                 Text("右键文件时打开其所在目录；右键文件夹时打开该文件夹。Finder 的“最近使用”等虚拟视图没有单一实际目录。")
                     .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
@@ -152,7 +153,7 @@ struct SettingsView: View {
             Text("确认文件已进入待移动状态后，播放一次轻提示音。")
                 .font(.system(size: 12)).foregroundStyle(.secondary)
             Divider()
-            permissionRow("辅助功能", detail: "授权后自动开始监听", enabled: model.trusted && model.listenerRunning, action: model.requestAccessibility)
+            accessibilityStatus
             permissionRow("Finder 扩展", detail: "在系统设置中勾选 Wayfinder Finder", enabled: model.extensionEnabled, action: model.manageExtension)
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
@@ -168,6 +169,24 @@ struct SettingsView: View {
                 .font(.system(size: 12)).foregroundStyle(.secondary)
             Text("所有操作在本机完成，不上传路径或文件。")
                 .font(.system(size: 12)).foregroundStyle(.secondary)
+        }
+    }
+    private var accessibilityStatus: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            permissionRow(model.accessibilityTitle, detail: "系统授权状态，与快捷键监听分别检查", enabled: model.trusted, action: model.requestAccessibility)
+            HStack {
+                Text(model.keyboardReadiness.title).font(.system(size: 12)).foregroundStyle(.secondary)
+                Spacer()
+                Button(model.trusted ? "重试监听" : "重新检查", action: model.retryListener)
+            }
+            if !model.trusted || (model.cutEnabled && !model.listenerRunning) {
+                Text("系统开关已打开但这里未刷新？先重新检查，或重启 App。测试版更新后，macOS 可能要求重新授权当前版本。")
+                    .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Button("重新启动 Wayfinder", action: model.restartApp)
+                    Button("显示当前 App") { NSWorkspace.shared.activateFileViewerSelecting([Bundle.main.bundleURL]) }
+                }.font(.system(size: 11))
+            }
         }
     }
     private func permissionRow(_ title: String, detail: String, enabled: Bool, action: @escaping () -> Void) -> some View {

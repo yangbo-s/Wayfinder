@@ -9,7 +9,7 @@ final class AppModel: ObservableObject {
     @Published var terminal: TerminalChoice { didSet { defaults.set(terminal.rawValue, forKey: "terminal") } }
     @Published var customApp: String { didSet { defaults.set(customApp, forKey: "customApp") } }
     @Published var customArguments: String { didSet { defaults.set(customArguments, forKey: "customArguments") } }
-    @Published var cutEnabled: Bool { didSet { defaults.set(cutEnabled, forKey: "cutEnabled"); cut.enabled = cutEnabled } }
+    @Published var cutEnabled: Bool { didSet { defaults.set(cutEnabled, forKey: "cutEnabled"); cut.enabled = cutEnabled; refresh() } }
     @Published var playCutSound: Bool { didSet { defaults.set(playCutSound, forKey: "playCutSound") } }
     @Published var trusted = false
     @Published var extensionEnabled = false
@@ -24,6 +24,12 @@ final class AppModel: ObservableObject {
     private let launcher = TerminalLauncher()
     private var timer: Timer?
     var showSettings: (() -> Void)?
+    var keyboardReadiness: KeyboardReadiness {
+        KeyboardReadiness(accessGranted: trusted, featureEnabled: cutEnabled, listenerRunning: listenerRunning)
+    }
+    var accessibilityTitle: String {
+        ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 ? "设备控制与数据访问" : "辅助功能"
+    }
 
     init() {
         terminal = TerminalChoice(rawValue: defaults.string(forKey: "terminal") ?? "") ?? .terminal
@@ -43,17 +49,35 @@ final class AppModel: ObservableObject {
         timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in self?.refresh() }
     }
     func refresh() {
-        trusted = AXIsProcessTrusted()
+        trusted = AccessibilityPermission.isGranted()
         extensionEnabled = FIFinderSyncController.isExtensionEnabled
         launchAtLogin = SMAppService.mainApp.status == .enabled
         conflictingApp = NSWorkspace.shared.runningApplications.contains { $0.localizedName == "Command X" }
-        if trusted { cut.start() } else if cut.isRunning { cut.stop() }
+        if trusted && cutEnabled { cut.start(accessGranted: trusted) } else { cut.stop() }
         listenerRunning = cut.isRunning
     }
+    func retryListener() {
+        cut.stop()
+        refresh()
+    }
     func requestAccessibility() {
+        refresh()
+        if trusted { retryListener(); return }
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
         openSettings("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
+    }
+    func restartApp() {
+        let config = NSWorkspace.OpenConfiguration()
+        config.createsNewApplicationInstance = true
+        config.arguments = ["--settings"]
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: config) { _, error in
+            DispatchQueue.main.async {
+                if let error {
+                    self.noticeIsError = true; self.notice = error.localizedDescription
+                } else { NSApp.terminate(nil) }
+            }
+        }
     }
     func manageExtension() { FIFinderSyncController.showExtensionManagementInterface() }
     func openSettings(_ link: String) { if let url = URL(string: link) { NSWorkspace.shared.open(url) } }
@@ -88,7 +112,13 @@ final class AppModel: ObservableObject {
             noticeIsError = false; notice = "已复制：\(text)"
         }
     }
-    func handleURL(_ url: URL) { perform { openTerminal(path: try TerminalRequest.path(from: url)) } }
+    func handleURL(_ url: URL) {
+        if let message = FinderActionFailure.message(from: url) {
+            noticeIsError = true; notice = message; showSettings?()
+            return
+        }
+        perform { openTerminal(path: try TerminalRequest.path(from: url)) }
+    }
     func perform(_ operation: () throws -> Void) {
         do { try operation() } catch {
             noticeIsError = true; notice = error.localizedDescription

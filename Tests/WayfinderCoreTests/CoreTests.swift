@@ -5,6 +5,52 @@ import XCTest
 @testable import WayfinderCore
 
 final class CoreTests: XCTestCase {
+    func testOrdinaryLaunchAlwaysShowsSettings() {
+        for hasLaunched in [false, true] {
+            XCTAssertEqual(LaunchPolicy.initial(hasLaunchedBefore: hasLaunched, isLoginLaunch: false,
+                arguments: ["Wayfinder"], handledExternalAction: false), .showSettings)
+        }
+    }
+    func testReopenShowsSettings() { XCTAssertEqual(LaunchPolicy.reopen(), .showSettings) }
+    func testBackgroundAndLoginLaunchStayQuiet() {
+        XCTAssertEqual(LaunchPolicy.initial(hasLaunchedBefore: true, isLoginLaunch: true,
+            arguments: ["Wayfinder"], handledExternalAction: false), .stayInBackground)
+        XCTAssertEqual(LaunchPolicy.initial(hasLaunchedBefore: true, isLoginLaunch: false,
+            arguments: ["Wayfinder", "--background"], handledExternalAction: false), .stayInBackground)
+    }
+    func testExternalTerminalRequestDoesNotAlsoShowSettings() {
+        XCTAssertEqual(LaunchPolicy.initial(hasLaunchedBefore: true, isLoginLaunch: false,
+            arguments: ["Wayfinder"], handledExternalAction: true), .stayInBackground)
+    }
+
+    func testGrantedPermissionIsDistinctFromListenerFailure() {
+        XCTAssertEqual(KeyboardReadiness(accessGranted: true, featureEnabled: true, listenerRunning: false), .listenerUnavailable)
+        XCTAssertEqual(KeyboardReadiness(accessGranted: true, featureEnabled: false, listenerRunning: false), .paused)
+        XCTAssertEqual(KeyboardReadiness(accessGranted: true, featureEnabled: true, listenerRunning: true), .ready)
+        XCTAssertEqual(KeyboardReadiness(accessGranted: false, featureEnabled: true, listenerRunning: false), .needsPermission)
+    }
+    func testFinderCurrentFolderDoesNotFollowSelectedChild() {
+        let folder = URL(fileURLWithPath: "/tmp/current", isDirectory: true)
+        let child = folder.appendingPathComponent("child.txt")
+        let context = FinderActionContext(target: folder, selection: [child])
+        XCTAssertEqual(context.target, folder)
+        XCTAssertEqual(context.selectedOrTarget, [child])
+        XCTAssertEqual(context.commonParent, folder)
+    }
+    func testFinderContextHandlesEmptyAndMixedSelections() {
+        let a = URL(fileURLWithPath: "/tmp/a/file")
+        let b = URL(fileURLWithPath: "/tmp/b/file")
+        XCTAssertNil(FinderActionContext(target: nil, selection: [a, b]).commonParent)
+        XCTAssertTrue(FinderActionContext(target: nil, selection: []).selectedOrTarget.isEmpty)
+        let context = FinderActionContext(target: a, selection: [])
+        XCTAssertEqual(context.selectedOrTarget, [a])
+        XCTAssertTrue(FinderActionContext(target: URL(string: "https://example.com"), selection: []).selectedOrTarget.isEmpty)
+    }
+    func testFinderErrorsAcceptOnlyKnownReasons() {
+        XCTAssertTrue(FinderActionFailure.message(from: URL(string: "wayfinder://error?reason=missing-location")!) != nil)
+        XCTAssertNil(FinderActionFailure.message(from: URL(string: "wayfinder://error?reason=arbitrary")!))
+        XCTAssertNil(FinderActionFailure.message(from: URL(string: "wayfinder://error?reason=missing-location&command=delete")!))
+    }
     func testCutMovesOnlyAfterFreshFileCopy() {
         var cut = CutSession(); cut.begin(changeCount: 10)
         cut.observe(changeCount: 10, fileCount: 3)
