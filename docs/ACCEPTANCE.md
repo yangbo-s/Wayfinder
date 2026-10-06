@@ -83,3 +83,5 @@ REQ-006：首个公开发布明确标记为预发布。README 已列出 arm64、
 本轮证据评分 **84/100**：需求覆盖21/25、正确性20/25、测试15/20、接口9/10、代码与安全9/10、文档交付10/10。提升来自真实 Finder 复制联调和启动回归；扣分仍包括剪切系统授权、完整终端 cwd、跨卷与登录 E2E。发布仍为测试版。
 
 TC-036 / REQ-006：最终 beta.2 宿主及扩展 release 构建通过；四份 plist 校验通过，DMG 校验和、ZIP 完整性通过。只读挂载 DMG 后，宿主与扩展二进制均与 dist 完全一致，deep/strict 签名通过，构建号为 2。本机 Applications 已安装该最终构建，并实看设置页完整 App 图标及 Finder 的简版图标。
+
+TC-037 / REQ-006：已推送源码 `04b483daa5584870ca13653b9524eb2a32323bfb`，标签 `v0.1.0-beta.2` 对应该源码。GitHub Release 已公开发布（isDraft=false / isPrerelease=true），三个资产均为 uploaded；从 GitHub 重新下载 DMG 和 ZIP，`shasum -a 256 -c SHA256SUMS.txt` 两项均 OK。发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.2 。后续验收文档提交不改变发布标签与二进制。
