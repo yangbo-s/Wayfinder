@@ -15,3 +15,6 @@ Default terminal is Apple Terminal. User currently uses Ghostty and requires ter
 
 ## Constraints and assumptions
 Local-first, no network dependency. User explicitly enables Accessibility and the Finder extension in macOS. Working name Wayfinder; no visual brand provided. Native Chinese settings is an implementation assumption. Actual path means absolute path with symbolic links resolved. Finder virtual collections have no single directory and report an actionable error.
+
+## Folder actions and toolbar (beta.3)
+The user explicitly chose a real Finder toolbar menu for terminal, path copying and folder creation. Context menus always offer an empty folder regardless of selection, plus single-item and multi-item grouping. All menu actions use small native icons; terminal wording is 在当前目录下打开终端. Folder creation asks for a name, preserves existing files on collision, and provides session-local undo in Wayfinder.

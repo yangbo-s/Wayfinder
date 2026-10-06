@@ -72,9 +72,12 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 feature("剪切文件", detail: "选中文件按 ⌘X，在目标文件夹按 ⌘V。", symbol: "scissors", trailing: "⌘X  →  ⌘V")
                 Divider().padding(.leading, 36)
-                feature("在这里打开终端", detail: "右键打开，或点击 Finder 扩展工具栏按钮。", symbol: "terminal", trailing: model.terminal.name)
+                feature("在当前目录下打开终端", detail: "从右键菜单或 Finder 工具栏菜单打开。", symbol: "terminal", trailing: model.terminal.name)
                 Divider().padding(.leading, 36)
                 feature("复制实际路径", detail: "右键文件或空白处，复制完整绝对路径。", symbol: "link", trailing: "/path")
+            }
+            if model.lastCreatedFolder != nil {
+                Button("撤销新建文件夹", action: model.undoFolderCreation).disabled(!model.canUndoFolder)
             }
             if !model.cutStatus.isEmpty {
                 Label(model.cutStatus, systemImage: "scissors").font(.system(size: 12)).foregroundStyle(Color.accentColor)
@@ -89,7 +92,7 @@ struct SettingsView: View {
                 permissionRow("Finder 扩展", detail: "用于右键菜单与工具栏菜单", enabled: model.extensionEnabled, action: model.manageExtension)
             }.padding(18).background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
             HStack {
-                Button("在 Finder 当前位置打开终端") { model.openTerminal() }.buttonStyle(.borderedProminent)
+                Button("在当前目录下打开终端") { model.openTerminal() }.buttonStyle(.borderedProminent)
                 Button("复制当前位置") { model.copyCurrentPath() }
             }.controlSize(.large)
         }
@@ -131,13 +134,15 @@ struct SettingsView: View {
             }
             Divider()
             VStack(alignment: .leading, spacing: 12) {
-                Label("工具栏单击打开", systemImage: "cursorarrow.click").font(.headline)
-                Text("启用 Finder 扩展后，在 Finder 工具栏右键选择“自定工具栏”，加入 Wayfinder 文件夹按钮。单击按钮即可打开当前文件夹的终端。普通打开 Wayfinder.app 始终显示设置。")
+                Label("工具栏快捷菜单", systemImage: "cursorarrow.click").font(.headline)
+                Text("启用 Finder 扩展后，在 Finder 工具栏右键选择“自定工具栏”，加入 Wayfinder 文件夹按钮。点击按钮可选择打开终端、复制路径或新建文件夹。普通打开 Wayfinder.app 始终显示设置。")
                     .font(.system(size: 13)).fixedSize(horizontal: false, vertical: true)
                 Text("右键文件时打开其所在目录；右键文件夹时打开该文件夹。Finder 的“最近使用”等虚拟视图没有单一实际目录。")
                     .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
             Button("用 Finder 当前文件夹测试") { model.openTerminal() }.controlSize(.large)
+            Text("无论是否选中文件，都可右键新建空文件夹；选中单个或多个项目时，还可将它们一起放入新文件夹。操作后可从 Wayfinder 菜单栏撤销本次新建。")
+                .font(.system(size: 12)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             if model.terminal == .ghostty {
                 Text("Ghostty 需要提供 new window / surface configuration 的 AppleScript 接口；旧版本请先更新。")
                     .font(.system(size: 12)).foregroundStyle(.secondary)

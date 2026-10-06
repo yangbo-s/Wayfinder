@@ -19,6 +19,11 @@ final class AppModel: ObservableObject {
     @Published var notice: String?
     @Published var noticeIsError = false
     @Published var conflictingApp = false
+    @Published var folderBusy = false
+    @Published var lastCreatedFolder: FolderCreation.Result?
+    private let folders = FolderCreation()
+    private let folderQueue = DispatchQueue(label: "local.wayfinder.folders", qos: .userInitiated)
+    var canUndoFolder: Bool { lastCreatedFolder != nil && !folderBusy }
     let cut = CutController()
     private let defaults = UserDefaults.standard
     private let launcher = TerminalLauncher()
@@ -113,11 +118,62 @@ final class AppModel: ObservableObject {
         }
     }
     func handleURL(_ url: URL) {
+        if url.host == "folder" {
+            perform { try createFolder(FolderActions.receive(url)) }
+            return
+        }
         if let message = FinderActionFailure.message(from: url) {
             noticeIsError = true; notice = message; showSettings?()
             return
         }
         perform { openTerminal(path: try TerminalRequest.path(from: url)) }
+    }
+    private func createFolder(_ request: FolderRequest) throws {
+        guard !folderBusy else {
+            throw NSError(domain: "Wayfinder", code: 2, userInfo: [NSLocalizedDescriptionKey: "上一个文件夹操作尚未完成，请稍后重试。"])
+        }
+        // Mark busy before showing the modal dialog: URL events can be reentrant.
+        folderBusy = true
+        guard let name = FolderActions.askName(for: request, suggested: folders.suggestedName(in: request.directory)) else {
+            folderBusy = false; return
+        }
+        folderQueue.async {
+            let result = Result { try self.folders.create(request, name: name) }
+            DispatchQueue.main.async {
+                self.folderBusy = false
+                switch result {
+                case .success(let created):
+                    self.lastCreatedFolder = created
+                    self.noticeIsError = false; self.notice = "已新建：\(created.folder.path)"
+                    NSWorkspace.shared.activateFileViewerSelecting([created.folder])
+                case .failure(let error): self.showFolderError(error)
+                }
+            }
+        }
+    }
+    func undoFolderCreation() {
+        guard canUndoFolder, let created = lastCreatedFolder else { return }
+        folderBusy = true
+        folderQueue.async {
+            let result = Result { try self.folders.undo(created) }
+            DispatchQueue.main.async {
+                self.folderBusy = false
+                switch result {
+                case .success:
+                    self.lastCreatedFolder = nil
+                    self.noticeIsError = false; self.notice = "已撤销新建文件夹，所选项目已恢复原位置。"
+                    if created.originalItems.isEmpty {
+                        NSWorkspace.shared.open(created.folder.deletingLastPathComponent())
+                    } else {
+                        NSWorkspace.shared.activateFileViewerSelecting(created.originalItems)
+                    }
+                case .failure(let error): self.showFolderError(error)
+                }
+            }
+        }
+    }
+    private func showFolderError(_ error: Error) {
+        noticeIsError = true; notice = error.localizedDescription; showSettings?()
     }
     func perform(_ operation: () throws -> Void) {
         do { try operation() } catch {

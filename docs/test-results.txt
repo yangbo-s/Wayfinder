@@ -1,3 +1,11 @@
+PASS folder request contract and 2000 items
+PASS empty folder and undo
+PASS single and multiple grouping and undo
+PASS folder rejects invalid names, collisions and selections
+PASS group preserves symlink and broken link
+PASS failed move rolls back completed moves
+PASS failed rollback retains recoverable files
+PASS undo protects new or replaced items
 PASS ordinary launch always shows settings
 PASS reopen shows settings
 PASS background and login launch stay quiet
@@ -23,4 +31,4 @@ PASS custom args remain literal
 PASS actual zsh quoting without command substitution
 PASS AppleScript escaping
 PASS default terminal identifiers
-25 tests, 0 failures
+33 tests, 0 failures

@@ -2,7 +2,16 @@ import Foundation
 @main enum TestRunner {
     static func main() {
         let suite = CoreTests()
+        let folders = FolderTests()
         let tests: [(String, () throws -> Void)] = [
+            ("folder request contract and 2000 items", folders.testFolderRequestContract),
+            ("empty folder and undo", folders.testEmptyFolderAndUndo),
+            ("single and multiple grouping and undo", folders.testSingleAndMultipleGroupingAndUndo),
+            ("folder rejects invalid names, collisions and selections", folders.testRejectsNamesCollisionsAndInvalidSelections),
+            ("group preserves symlink and broken link", folders.testGroupingMovesSymlinkNotTarget),
+            ("failed move rolls back completed moves", folders.testFailureRollsBackCompletedMoves),
+            ("failed rollback retains recoverable files", folders.testFailedRollbackPreservesRecoverableFiles),
+            ("undo protects new or replaced items", folders.testUndoProtectsNewOrReplacedItems),
             ("ordinary launch always shows settings", suite.testOrdinaryLaunchAlwaysShowsSettings),
             ("reopen shows settings", suite.testReopenShowsSettings),
             ("background and login launch stay quiet", suite.testBackgroundAndLoginLaunchStayQuiet),

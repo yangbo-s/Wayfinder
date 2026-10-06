@@ -18,7 +18,7 @@ cp Resources/Extension-Info.plist "$EXT/Contents/Info.plist"
 xcrun swiftc -swift-version 5 -O -parse-as-library -module-name WayfinderFinder \
     -target "$ARCH-apple-macos13.0" -sdk "$(xcrun --show-sdk-path)" \
     -framework AppKit -framework FinderSync -Xlinker -e -Xlinker _NSExtensionMain \
-    FinderExtension/FinderSync.swift Sources/Wayfinder/WayfinderSymbol.swift Sources/WayfinderCore/PathResolver.swift Sources/WayfinderCore/TerminalRequest.swift Sources/WayfinderCore/FinderActionContext.swift -o "$EXT/Contents/MacOS/WayfinderFinder"
+    FinderExtension/FinderSync.swift Sources/Wayfinder/WayfinderSymbol.swift Sources/WayfinderCore/PathResolver.swift Sources/WayfinderCore/TerminalRequest.swift Sources/WayfinderCore/FinderActionContext.swift Sources/WayfinderCore/FolderRequest.swift -o "$EXT/Contents/MacOS/WayfinderFinder"
 xcrun swift scripts/make-icon.swift "$APP/Contents/Resources"
 codesign --force --sign "$IDENTITY" --options runtime --entitlements Resources/Extension.entitlements "$EXT"
 codesign --force --sign "$IDENTITY" --options runtime --entitlements Resources/App.entitlements "$APP"

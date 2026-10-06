@@ -1,17 +1,18 @@
 # Wayfinder
 
-**让 Finder 更顺手：剪切文件、就地打开终端、一键复制真实路径。**
+**让 Finder 更顺手：剪切文件、打开终端、复制路径和新建文件夹。**
 
 Wayfinder is a lightweight, native macOS Finder companion for cut & paste, opening your preferred terminal, and copying resolved filesystem paths.
 
-[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.2) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
+[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.3) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
 
 | 功能 | 行为 |
 |---|---|
 | ⌘X / ⌘V 文件剪切 | 使用 Finder 原生移动流程，保留冲突提示和撤销 |
 | 在当前位置打开终端 | 默认 Terminal，可选 Ghostty、iTerm2、Warp 或自定义 App |
 | Finder 右键复制路径 | 支持当前目录、选中项目与多选，解析符号链接 |
-| 工具栏快捷入口 | 添加 Wayfinder Finder 扩展按钮，一次点击打开终端 |
+| 工具栏快捷菜单 | 打开终端、复制路径、新建文件夹，菜单项均带小图标 |
+| 新建文件夹 | 随时新建空文件夹，或将单个 / 多个所选项目放入新文件夹 |
 | 登录时启动 | 可选，后台驻留菜单栏 |
 | 剪切提示音 | 成功进入待移动状态时提示，可关闭 |
 
@@ -19,13 +20,13 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 
 ## 下载
 
-当前版本为 **v0.1.0-beta.2**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
+当前版本为 **v0.1.0-beta.3**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
 
-- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.2/Wayfinder-v0.1.0-beta.2-macOS-arm64.dmg)：打开后拖到 Applications。
-- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.2/Wayfinder-v0.1.0-beta.2-macOS-arm64.zip)：解压后移动 App。
-- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.2/SHA256SUMS.txt)。
+- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.3/Wayfinder-v0.1.0-beta.3-macOS-arm64.dmg)：打开后拖到 Applications。
+- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.3/Wayfinder-v0.1.0-beta.3-macOS-arm64.zip)：解压后移动 App。
+- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.3/SHA256SUMS.txt)。
 
-**测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。25 项核心测试通过；Finder 右键文件、符号链接及当前文件夹复制已实测，工具栏点击到 Ghostty 脚本返回成功；真实移动、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
+**测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。33 项核心测试通过；Finder 的空文件夹、单项/多项分组与撤销已实测；右键路径复制和终端请求延续 beta.2 的验证。完整快捷键剪切、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
 
 ## 安装与使用
 
@@ -45,12 +46,12 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 
 复制别的内容、按 Esc 或关闭剪切开关会取消待移动状态。Finder 重命名、搜索框和其他应用保留原有快捷键。剪贴板复制尚未完成时快速按下 ⌘V，会提示再按一次。取消 Finder 的移动对话框后若要重试，请重新 ⌘X。
 
-### 在这里打开终端
+### 在当前目录下打开终端
 
 默认使用**系统 Terminal**。设置 → 终端可选 Ghostty、iTerm2、Warp 或自定义终端。
 
-- **工具栏单击**：启用 Finder 扩展后，在 Finder 工具栏右键 → 自定工具栏，加入 **Wayfinder** 文件夹按钮。单击即在当前 Finder 文件夹打开终端。普通打开 App 则显示设置。
-- **右键**：「在这里打开终端」。点文件会打开其父目录；点文件夹会打开该文件夹；多选时采用 Finder 返回的第一个项目。
+- **工具栏菜单**：启用 Finder 扩展后，在 Finder 工具栏右键 → 自定工具栏，加入 **Wayfinder** 文件夹按钮。点击打开包含终端、复制路径和新建文件夹的功能菜单。普通打开 App 则显示设置。
+- **右键**：「在当前目录下打开终端」。点文件会打开其父目录；点文件夹会打开该文件夹；多选时采用 Finder 返回的第一个项目。
 - **菜单栏**：Wayfinder →「在当前位置打开…」。设置也可从菜单栏进入。
 
 Ghostty 使用本地 AppleScript 字典中的 `new surface configuration` / `new window`，需要提供这些命令的较新版本。Terminal / iTerm2 在新窗口执行安全转义的 `cd`。Warp 使用官方 `warp://action/new_window?path=…`。
@@ -62,6 +63,20 @@ Ghostty 使用本地 AppleScript 字典中的 `new surface configuration` / `new
 右键空白处 →「复制当前文件夹的实际路径」。右键文件 →「复制所选项目的实际路径」，也可复制所在文件夹。多选每行一条；空格和中文原样保留，不加 shell 引号；符号链接解析为目标绝对路径。macOS 的 `/tmp` 等链接可能显示成 `/private/tmp`。名称含换行的文件仍原样复制，因此文本行不一定对应项目数。
 
 「最近使用」、搜索集合、网络浏览根目录等虚拟视图可能没有单一实际路径，打开实际文件夹后重试。Finder Sync 的菜单覆盖与出现位置由 macOS 决定。
+
+### 新建文件夹
+
+无需滚到 Finder 文件列表底部。右键选中的文件、多个项目或空白处，均能选择 **新建空文件夹…**；这个操作只创建空目录，不移动任何已选项目。
+
+- 单选：**将所选项目放入新文件夹…**。
+- 多选：**将所选的 N 个项目放入新文件夹…**。
+- 输入名称后点击“新建”；取消时不改动文件。创建完成后在 Finder 中选中新文件夹。
+
+只能将同一目录内的项目分组，不覆盖同名目标；符号链接移动链接本身。遇到移动错误会回退已完成的移动；若其他进程的改动导致无法完全回退，会明确显示保留文件的位置。
+
+Wayfinder 菜单栏与设置概览提供 **撤销新建文件夹**，可撤销本次 App 会话中最近一次成功的新建/分组。这与 Finder 的 ⌘Z 独立。新文件夹已增加其他内容、项目已被替换或原位置已被占用时，撤销会拒绝覆盖现有文件。大量项目分组由多个同卷移动组成，不是跨文件原子事务；处理期间 App 不接受退出。
+
+Finder 工具栏的下箭头由系统提供，现已对应真正的功能菜单。菜单在整个 Finder 右键菜单中的插入位置由 macOS 决定，扩展无法强制置顶；工具栏菜单提供更短的入口。
 
 ## 构建与测试
 
@@ -75,7 +90,7 @@ open dist/Wayfinder.app --args --settings
 
 脚本默认使用 `/Library/Developer/CommandLineTools`，不修改全局 xcode-select。如已配置完整 Xcode，可显式传入 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`。`ARCH=arm64` 或 `ARCH=x86_64` 选择构建架构；默认为本机架构。
 
-生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.2` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
+生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.3` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
 
 源码可用 Xcode 打开 `Package.swift`；完整宿主 + 扩展打包由 `scripts/build.sh` 执行。直接运行 Swift Package 的可执行文件不包含 App 元数据和 Finder 扩展。
 

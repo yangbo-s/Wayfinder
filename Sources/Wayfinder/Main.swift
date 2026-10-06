@@ -55,6 +55,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     func applicationDidBecomeActive(_ notification: Notification) { model.refresh() }
     func applicationWillTerminate(_ notification: Notification) { model.cut.stop() }
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard !model.folderBusy else {
+            model.noticeIsError = true; model.notice = "文件夹操作尚未完成，请完成或取消后再退出。"
+            return .terminateCancel
+        }
+        return .terminateNow
+    }
     func menuWillOpen(_ menu: NSMenu) {
         menu.removeAllItems()
         let statusText = model.cutStatus.isEmpty
@@ -62,8 +69,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             : model.cutStatus
         let summary = menu.addItem(withTitle: statusText, action: nil, keyEquivalent: ""); summary.isEnabled = false
         menu.addItem(.separator())
-        add(menu, "在当前位置打开 \(model.terminal.name)", #selector(openTerminal))
+        add(menu, "在当前目录下打开终端（\(model.terminal.name)）", #selector(openTerminal))
         add(menu, "复制当前文件夹实际路径", #selector(copyPath))
+        if model.lastCreatedFolder != nil {
+            add(menu, "撤销新建文件夹", #selector(undoFolder))
+            menu.items.last?.isEnabled = model.canUndoFolder
+        }
         menu.addItem(.separator())
         add(menu, "设置…", #selector(showSettings), key: ",")
         add(menu, "退出 Wayfinder", #selector(quit), key: "q")
@@ -86,6 +97,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     @objc private func openTerminal() { model.openTerminal() }
     @objc private func copyPath() { model.copyCurrentPath() }
+    @objc private func undoFolder() { model.undoFolderCreation() }
     @objc private func quit() { NSApp.terminate(nil) }
     private func setupApplicationMenu() {
         let bar = NSMenu()
