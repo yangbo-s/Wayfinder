@@ -4,7 +4,7 @@
 
 Wayfinder is a lightweight, native macOS Finder companion for cut & paste, opening your preferred terminal, and copying resolved filesystem paths.
 
-[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.3) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
+[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.4) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
 
 | 功能 | 行为 |
 |---|---|
@@ -20,11 +20,11 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 
 ## 下载
 
-当前版本为 **v0.1.0-beta.3**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
+当前版本为 **v0.1.0-beta.4**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
 
-- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.3/Wayfinder-v0.1.0-beta.3-macOS-arm64.dmg)：打开后拖到 Applications。
-- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.3/Wayfinder-v0.1.0-beta.3-macOS-arm64.zip)：解压后移动 App。
-- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.3/SHA256SUMS.txt)。
+- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.4/Wayfinder-v0.1.0-beta.4-macOS-arm64.dmg)：打开后拖到 Applications。
+- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.4/Wayfinder-v0.1.0-beta.4-macOS-arm64.zip)：解压后移动 App。
+- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.4/SHA256SUMS.txt)。
 
 **测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。33 项核心测试通过；Finder 的空文件夹、单项/多项分组与撤销已实测；右键路径复制和终端请求延续 beta.2 的验证。完整快捷键剪切、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
 
@@ -66,15 +66,16 @@ Ghostty 使用本地 AppleScript 字典中的 `new surface configuration` / `new
 
 ### 新建文件夹
 
-无需滚到 Finder 文件列表底部。右键选中的文件、多个项目或空白处，均能选择 **新建空文件夹…**；这个操作只创建空目录，不移动任何已选项目。
+无需滚到 Finder 文件列表底部。右键选中的文件、多个项目或空白处，均能选择 **新建空文件夹**；这个操作只创建空目录，不移动任何已选项目。
 
-- 单选：**将所选项目放入新文件夹…**。
-- 多选：**将所选的 N 个项目放入新文件夹…**。
-- 输入名称后点击“新建”；取消时不改动文件。创建完成后在 Finder 中选中新文件夹。
+- 单选：**将所选项目放入新文件夹**。
+- 多选：**将所选的 N 个项目放入新文件夹**。
+- 点击后直接创建 `untitled folder`，重名自动加 `2`、`3` 等编号，并在 Finder 中选中名称进入重命名。没有额外命名弹窗。
+- 直接输入新名称，按 Return 确认；不修改时按 Return 保留默认名称。自动重命名识别英文、简体中文和繁体中文 Finder 的原生命令，需要已启用的辅助功能权限；未授权时仍会创建并选中，可手动按 Return。
 
 只能将同一目录内的项目分组，不覆盖同名目标；符号链接移动链接本身。遇到移动错误会回退已完成的移动；若其他进程的改动导致无法完全回退，会明确显示保留文件的位置。
 
-Wayfinder 菜单栏与设置概览提供 **撤销新建文件夹**，可撤销本次 App 会话中最近一次成功的新建/分组。这与 Finder 的 ⌘Z 独立。新文件夹已增加其他内容、项目已被替换或原位置已被占用时，撤销会拒绝覆盖现有文件。大量项目分组由多个同卷移动组成，不是跨文件原子事务；处理期间 App 不接受退出。
+Wayfinder 菜单栏与设置概览提供 **撤销新建文件夹**，可撤销本次 App 会话中最近一次成功的新建/分组。这与 Finder 的 ⌘Z 独立。在原父目录内重命名后仍可撤销。新文件夹已增加其他内容、项目已被替换或原位置已被占用时，撤销会拒绝覆盖现有文件。大量项目分组由多个同卷移动组成，不是跨文件原子事务；处理期间 App 不接受退出。
 
 Finder 工具栏的下箭头由系统提供，现已对应真正的功能菜单。菜单在整个 Finder 右键菜单中的插入位置由 macOS 决定，扩展无法强制置顶；工具栏菜单提供更短的入口。
 
@@ -90,7 +91,7 @@ open dist/Wayfinder.app --args --settings
 
 脚本默认使用 `/Library/Developer/CommandLineTools`，不修改全局 xcode-select。如已配置完整 Xcode，可显式传入 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`。`ARCH=arm64` 或 `ARCH=x86_64` 选择构建架构；默认为本机架构。
 
-生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.3` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
+生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.4` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
 
 源码可用 Xcode 打开 `Package.swift`；完整宿主 + 扩展打包由 `scripts/build.sh` 执行。直接运行 Swift Package 的可执行文件不包含 App 元数据和 Finder 扩展。
 

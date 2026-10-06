@@ -132,21 +132,21 @@ final class AppModel: ObservableObject {
         guard !folderBusy else {
             throw NSError(domain: "Wayfinder", code: 2, userInfo: [NSLocalizedDescriptionKey: "上一个文件夹操作尚未完成，请稍后重试。"])
         }
-        // Mark busy before showing the modal dialog: URL events can be reentrant.
         folderBusy = true
-        guard let name = FolderActions.askName(for: request, suggested: folders.suggestedName(in: request.directory)) else {
-            folderBusy = false; return
-        }
         folderQueue.async {
-            let result = Result { try self.folders.create(request, name: name) }
+            let result = Result { try self.folders.create(request) }
             DispatchQueue.main.async {
-                self.folderBusy = false
                 switch result {
                 case .success(let created):
                     self.lastCreatedFolder = created
                     self.noticeIsError = false; self.notice = "已新建：\(created.folder.path)"
-                    NSWorkspace.shared.activateFileViewerSelecting([created.folder])
-                case .failure(let error): self.showFolderError(error)
+                    FinderRename.revealAndRename(created.folder) { message in
+                        self.folderBusy = false
+                        if let message { self.notice = "已新建：\(created.folder.path)\n\(message)" }
+                    }
+                case .failure(let error):
+                    self.folderBusy = false
+                    self.showFolderError(error)
                 }
             }
         }

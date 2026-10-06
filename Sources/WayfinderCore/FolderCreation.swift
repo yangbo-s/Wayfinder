@@ -26,13 +26,22 @@ public final class FolderCreation {
             throw FolderError.invalidName
         }
     }
-    public func suggestedName(in directory: String) -> String {
+    private func suggestedName(in directory: String) -> String {
         let parent = URL(fileURLWithPath: directory)
-        var candidate = "未命名文件夹", suffix = 2
+        var candidate = "untitled folder", suffix = 2
         while exists(parent.appendingPathComponent(candidate)) {
-            candidate = "未命名文件夹 \(suffix)"; suffix += 1
+            candidate = "untitled folder \(suffix)"; suffix += 1
         }
         return candidate
+    }
+    public func create(_ request: FolderRequest) throws -> Result {
+        // The exclusive mkdir below is authoritative if another writer takes a
+        // suggested name between the lookup and creation. Never reuse its folder.
+        for _ in 0..<100 {
+            do { return try create(request, name: suggestedName(in: request.directory)) }
+            catch FolderError.nameExists { continue }
+        }
+        throw FolderError.nameExists
     }
     public func create(_ request: FolderRequest, name: String) throws -> Result {
         try request.validate()
@@ -68,15 +77,27 @@ public final class FolderCreation {
         return Result(folder: folder, folderIdentity: folderIdentity, moves: moves)
     }
     public func undo(_ result: Result) throws {
-        guard (try? identity(result.folder)) == result.folderIdentity else { throw FolderError.changedItem }
-        let children = try files.contentsOfDirectory(atPath: result.folder.path)
+        let folder = try currentFolder(for: result)
+        let children = try files.contentsOfDirectory(atPath: folder.path)
         guard Set(children) == Set(result.moves.map { $0.destination.lastPathComponent }) else { throw FolderError.changedItem }
-        let reversed = result.moves.reversed().map { Move(source: $0.destination, destination: $0.source, identity: $0.identity) }
-        try perform(reversed, recoveryLocation: result.folder)
-        guard rmdir(result.folder.path) == 0 else {
-            // Restoring items succeeded. If a concurrent writer added content, preserve it.
-            throw FolderError.recoveryRequired(result.folder.path)
+        let reversed = result.moves.reversed().map {
+            Move(source: folder.appendingPathComponent($0.destination.lastPathComponent), destination: $0.source, identity: $0.identity)
         }
+        try perform(reversed, recoveryLocation: folder)
+        guard (try? identity(folder)) == result.folderIdentity, rmdir(folder.path) == 0 else {
+            // Restoring items succeeded. If a concurrent writer added content, preserve it.
+            throw FolderError.recoveryRequired(folder.path)
+        }
+    }
+    private func currentFolder(for result: Result) throws -> URL {
+        if (try? identity(result.folder)) == result.folderIdentity { return result.folder }
+        // Inline rename changes the path, not the directory's identity. Stay in
+        // the original parent; moving the group elsewhere is outside this undo.
+        let siblings = try files.contentsOfDirectory(at: result.folder.deletingLastPathComponent(), includingPropertiesForKeys: nil)
+        guard let renamed = siblings.first(where: { (try? identity($0)) == result.folderIdentity }) else {
+            throw FolderError.changedItem
+        }
+        return renamed
     }
     private func identity(_ url: URL) throws -> Identity { Identity(try files.attributesOfItem(atPath: url.path)) }
     private func exists(_ url: URL) -> Bool { (try? files.attributesOfItem(atPath: url.path)) != nil }

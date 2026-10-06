@@ -110,3 +110,30 @@ TC-037 / REQ-006：已推送源码 `04b483daa5584870ca13653b9524eb2a32323bfb`，
 对比旧版本，本轮开始前观察到用户安装的 beta.2 已显示“设备控制与数据访问已启用 / Finder 剪切已就绪”；更新新代码后授权可能再次因签名身份改变而失效。本轮未代用户更改系统权限，且新建文件夹功能不依赖辅助功能或 Finder 自动化权限。
 
 TC-050 / REQ-006：源码 `a884736809688a8151a24f40aa46a4c7b80ee5d9` 与标签 v0.1.0-beta.3 已推送。GitHub Release 为公开预发布（isDraft=false / isPrerelease=true），DMG、ZIP、SHA256SUMS 均 uploaded。重新下载 DMG/ZIP，校验文件两项均 OK。最终 App 已安装到 Applications，安装二进制与 dist 一致。发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.3 。本条验收提交不改变发布标签对应二进制。
+
+
+## v0.1.0-beta.4 验收（2026-10-06）
+
+REQ-012 替代 beta.3 的命名弹窗流程。命名弹窗是先前实现选择，并非 Finder 限制。
+
+| 用例 | 关联 | 实际结果与证据 |
+|---|---|---|
+| TC-051 | REQ-012 | 通过：默认名称、同名文件及断裂符号链接均保留，自动创建编号 4；`testAutomaticNamesPreserveExistingItems` |
+| TC-052 | REQ-012 | 通过：注入查名后、mkdir 前的竞争目录，重试编号 2，不复用竞争者目录；`testAutomaticNameRetriesConcurrentCollision` |
+| TC-053 | REQ-012 | 通过：空、1 项、3 项目录改名后撤销，按身份找回目录，保留旧路径上的无关替换文件，所有原内容恢复 |
+| TC-054 | REQ-012 | 通过：改名后新增内容、移出原父目录均拒绝撤销，原内容保留 |
+| TC-055 | REQ-012 | 通过：最终构建工具栏空目录、右键单文件与 3 文件分组三条入口均立即创建并自动进入 Finder 原生名称编辑；未额外按 Return 触发编辑，直接键入 renamed-empty / renamed-single / renamed-multiple 并确认成功。三种改名后的实际撤销均成功，文件内容逐个匹配 |
+| TC-056 | REQ-012 | 部分通过：当前构建未获 AX 权限时仍创建并选中，状态解释手动 Return；没有命名/授权弹窗。用户输入取消分支已观察到状态反馈；其他语言菜单、图标/分栏/图库视图与 VoiceOver 本轮未实测 |
+| TC-057 | REQ-006 | 通过：最终 DMG 只读挂载、host/extension 与已安装实测二进制逐字节一致、CFBundleVersion 均为 4、deep/strict 签名、DMG 校验、ZIP 解压测试和 SHA-256 均通过 |
+
+核心回归：`./scripts/test.sh` 实际 37 tests, 0 failures。宿主和扩展编译、deep/strict 签名验证通过。测试仅使用本次独立临时目录。
+
+实测修复记录：首个候选创建成功，但没有进入编辑；有限等待后报告 Finder 未就绪。修正扩展发送文件夹请求时的 `OpenConfiguration.activates=false`，防止宿主在揭示后夺回焦点；路径比较统一用 actualURL 的 path，避免 URL 表示差异。该阶段候选安装后，ad-hoc 签名改变使 AX 授权失效，需要用户对该构建重新启用，不能当成实测通过。
+
+
+进一步定位：用户真实点击同样没有进入编辑，否定“仅自动化测试焦点变化”的解释。App 明确反馈选中项目校验未通过，而辅助功能显示就绪、现有“复制当前位置”能成功读取 Finder 目录，离线 Foundation 路径规范化一致。最终实现改为读取 Finder AXSelectedRows / AXSelectedChildren 中的真实文件 URL，不再将 AppleScript 转换失败静默当作未选中；仍校验前台、文件区域和用户输入。该系统接口差异以真实 Finder 测试作为回归依据，不用模拟路径匹配的单元测试冒充 UI 联调。
+
+
+最终 UI 修复证据：AX 文件 URL 校验通过后，PID 定向合成 Return 仍未进入编辑。对照 Finder 原生 File → Rename 菜单可稳定进入编辑；最终改为 AXPress 原生命令，工具栏触发后截图实际出现默认名称选中编辑框，单/多选同样无需额外 Return 即可输入新名称。两条失败候选均未推送或发布。最终进程显示辅助功能已启用、Finder 剪切已就绪；测试只操作独立临时文件。
+
+本轮质量评分 **88/100**：需求与验收 23/25（目标三条主路径实测；英文 Finder 列表视图以外仍待测），正确性 23/25（37 项文件边界/回退/撤销测试；云盘和网络卷未覆盖），测试 16/20（真实 UI 的创建/改名/撤销通过；旧剪切/终端/登录完整 E2E 未重跑），架构 9/10（纯文件层与 AX 交互隔离；菜单标题有语言边界），代码 9/10（不发全局按键、身份校验、无覆盖；仍受外部并发变化限制），文档交付暂计 8/10（最终发布下载校验完成后补记）。本次仅建议明确标示的测试版发布，不宣称稳定版全平台验收。

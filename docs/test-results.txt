@@ -1,3 +1,7 @@
+PASS automatic folder names preserve existing items
+PASS automatic name retries concurrent collision
+PASS undo follows renamed empty and grouped folders
+PASS renamed folder undo protects changed contents and parent
 PASS folder request contract and 2000 items
 PASS empty folder and undo
 PASS single and multiple grouping and undo
@@ -31,4 +35,4 @@ PASS custom args remain literal
 PASS actual zsh quoting without command substitution
 PASS AppleScript escaping
 PASS default terminal identifiers
-33 tests, 0 failures
+37 tests, 0 failures

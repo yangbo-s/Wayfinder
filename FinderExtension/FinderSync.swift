@@ -33,9 +33,9 @@ final class FinderSync: FIFinderSync {
             add("复制所在文件夹的实际路径", #selector(copyParentPath(_:)), symbol: "folder", to: menu)
         }
         menu.addItem(.separator())
-        add("新建空文件夹…", isItem ? #selector(newEmptyBesideSelection(_:)) : #selector(newEmptyInCurrent(_:)), symbol: "folder.badge.plus", to: menu)
+        add("新建空文件夹", isItem ? #selector(newEmptyBesideSelection(_:)) : #selector(newEmptyInCurrent(_:)), symbol: "folder.badge.plus", to: menu)
         if !current.selection.isEmpty {
-            let title = current.selection.count == 1 ? "将所选项目放入新文件夹…" : "将所选的 \(current.selection.count) 个项目放入新文件夹…"
+            let title = current.selection.count == 1 ? "将所选项目放入新文件夹" : "将所选的 \(current.selection.count) 个项目放入新文件夹"
             add(title, #selector(newFolderWithSelection(_:)), symbol: "folder.fill.badge.plus", to: menu)
             menu.items.last?.isEnabled = current.commonParent != nil
         }
@@ -125,7 +125,11 @@ final class FinderSync: FIFinderSync {
     private func openHost(_ request: URL, onFailure: (() -> Void)? = nil) {
         // Use the matching containing app when more than one build exists.
         let appURL = Bundle.main.bundleURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        NSWorkspace.shared.open([request], withApplicationAt: appURL, configuration: NSWorkspace.OpenConfiguration()) { [weak self] _, error in
+        let configuration = NSWorkspace.OpenConfiguration()
+        // Folder actions finish in Finder. Launching the host must not take
+        // focus back after it reveals the new folder for inline rename.
+        if request.host == "folder" { configuration.activates = false }
+        NSWorkspace.shared.open([request], withApplicationAt: appURL, configuration: configuration) { [weak self] _, error in
             if let error {
                 onFailure?()
                 self?.logger.error("Cannot open containing app: \(error.localizedDescription, privacy: .public)")

@@ -4,6 +4,10 @@ import Foundation
         let suite = CoreTests()
         let folders = FolderTests()
         let tests: [(String, () throws -> Void)] = [
+            ("automatic folder names preserve existing items", folders.testAutomaticNamesPreserveExistingItems),
+            ("automatic name retries concurrent collision", folders.testAutomaticNameRetriesConcurrentCollision),
+            ("undo follows renamed empty and grouped folders", folders.testUndoFollowsRenamedFolderAndPreservesOldPathReplacement),
+            ("renamed folder undo protects changed contents and parent", folders.testUndoRenamedFolderRefusesChangedContentsOrMovedParent),
             ("folder request contract and 2000 items", folders.testFolderRequestContract),
             ("empty folder and undo", folders.testEmptyFolderAndUndo),
             ("single and multiple grouping and undo", folders.testSingleAndMultipleGroupingAndUndo),

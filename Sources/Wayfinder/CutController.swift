@@ -103,7 +103,7 @@ final class CutController {
         return Unmanaged.passUnretained(event)
     }
 
-    private static func finderFileAreaIsFocused() -> Bool {
+    static func finderFileAreaIsFocused() -> Bool {
         guard let finder = NSWorkspace.shared.frontmostApplication else { return false }
         let app = AXUIElementCreateApplication(finder.processIdentifier)
         AXUIElementSetMessagingTimeout(app, 0.03)

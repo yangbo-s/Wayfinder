@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-VERSION="${1:-v0.1.0-beta.3}"
+VERSION="${1:-v0.1.0-beta.4}"
 if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
-    printf 'Expected a version such as v0.1.0-beta.3\n' >&2
+    printf 'Expected a version such as v0.1.0-beta.4\n' >&2
     exit 1
 fi
 ./scripts/build.sh
@@ -24,6 +24,8 @@ Wayfinder 安装
 在 Finder 工具栏右键选择“自定工具栏”，加入 Wayfinder 文件夹按钮。
 点击该扩展按钮可选择打开终端、复制路径或新建文件夹；普通打开 App 显示设置。
 右键文件或文件夹空白处，可以复制实际路径、新建空文件夹，或将所选项目放入新文件夹。
+点击新建后立即创建 untitled folder，重名自动编号，随后在 Finder 内重命名。
+自动进入重命名需要辅助功能权限；未授权仍创建并选中，可手动按 Return。
 新建操作可在 Wayfinder 菜单栏中撤销最近一次；不等同于 Finder 的 Command+Z。
 登录启动和剪切提示音开关位于“权限与设置”。
 

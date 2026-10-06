@@ -40,6 +40,67 @@ final class FolderTests: XCTestCase {
             XCTAssertEqual(try read(source), "original")
         }
     }
+    func testAutomaticNamesPreserveExistingItems() throws {
+        try fixture { root in
+            let action = FolderCreation()
+            let request = FolderRequest(mode: .empty, directory: root.path)
+            let first = try action.create(request)
+            XCTAssertEqual(first.folder.lastPathComponent, "untitled folder")
+            try write(root.appendingPathComponent("untitled folder 2"), "existing file")
+            try FileManager.default.createSymbolicLink(atPath: root.appendingPathComponent("untitled folder 3").path,
+                                                       withDestinationPath: "/missing/Wayfinder-test")
+            let next = try action.create(request)
+            XCTAssertEqual(next.folder.lastPathComponent, "untitled folder 4")
+            XCTAssertEqual(try read(root.appendingPathComponent("untitled folder 2")), "existing file")
+            XCTAssertEqual(try FileManager.default.destinationOfSymbolicLink(atPath: root.appendingPathComponent("untitled folder 3").path), "/missing/Wayfinder-test")
+        }
+    }
+    func testAutomaticNameRetriesConcurrentCollision() throws {
+        try fixture { root in
+            let files = RacingNameManager()
+            files.candidate = root.appendingPathComponent("untitled folder").path
+            let result = try FolderCreation(files: files).create(FolderRequest(mode: .empty, directory: root.path))
+            XCTAssertEqual(result.folder.lastPathComponent, "untitled folder 2")
+            XCTAssertTrue(FileManager.default.fileExists(atPath: files.candidate!))
+        }
+    }
+    func testUndoFollowsRenamedFolderAndPreservesOldPathReplacement() throws {
+        for count in [0, 1, 3] {
+            try fixture { root in
+                let items = (0..<count).map { root.appendingPathComponent("file\($0)") }
+                for item in items { try write(item) }
+                let action = FolderCreation()
+                let result = try action.create(FolderRequest(mode: count == 0 ? .empty : .selection,
+                                                             directory: root.path, items: items.map(\.path)))
+                let renamed = root.appendingPathComponent("重命名 ' & folder")
+                try FileManager.default.moveItem(at: result.folder, to: renamed)
+                try write(result.folder, "unrelated replacement")
+                try action.undo(result)
+                XCTAssertFalse(FileManager.default.fileExists(atPath: renamed.path))
+                XCTAssertEqual(try read(result.folder), "unrelated replacement")
+                for item in items { XCTAssertEqual(try read(item), "original") }
+            }
+        }
+    }
+    func testUndoRenamedFolderRefusesChangedContentsOrMovedParent() throws {
+        try fixture { root in
+            let item = root.appendingPathComponent("file"); try write(item)
+            let action = FolderCreation()
+            let result = try action.create(FolderRequest(mode: .selection, directory: root.path, items: [item.path]))
+            let renamed = root.appendingPathComponent("renamed")
+            try FileManager.default.moveItem(at: result.folder, to: renamed)
+            let added = renamed.appendingPathComponent("added"); try write(added, "keep")
+            XCTAssertThrowsError(try action.undo(result))
+            XCTAssertEqual(try read(added), "keep")
+            try FileManager.default.removeItem(at: added)
+            let elsewhere = root.appendingPathComponent("elsewhere")
+            try FileManager.default.createDirectory(at: elsewhere, withIntermediateDirectories: false)
+            let moved = elsewhere.appendingPathComponent("renamed")
+            try FileManager.default.moveItem(at: renamed, to: moved)
+            XCTAssertThrowsError(try action.undo(result))
+            XCTAssertEqual(try read(moved.appendingPathComponent("file")), "original")
+        }
+    }
     func testSingleAndMultipleGroupingAndUndo() throws {
         for count in [1, 30] {
             try fixture { root in
@@ -135,6 +196,19 @@ final class FolderTests: XCTestCase {
             XCTAssertEqual(try read(result.folder.appendingPathComponent("a")), "replacement")
             XCTAssertEqual(try read(backup), "original")
         }
+    }
+}
+
+private final class RacingNameManager: FileManager, @unchecked Sendable {
+    var candidate: String?
+    private var injected = false
+    override func attributesOfItem(atPath path: String) throws -> [FileAttributeKey: Any] {
+        if !injected, path == candidate {
+            injected = true
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false)
+            throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError)
+        }
+        return try super.attributesOfItem(atPath: path)
     }
 }
 

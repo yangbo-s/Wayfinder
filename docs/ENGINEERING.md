@@ -65,3 +65,18 @@ MOD-006：FolderCreation（真实文件系统预检、无覆盖移动、失败�
 ADR-004：Finder 快捷键/菜单模拟依赖辅助功能且无法可靠处理自定义名称；Finder AppleScript 移动还受自动化授权、符号链接 alias 解析及撤销语义影响。选择范围受限的 FileManager 同父目录分组，文件身份校验、无覆盖移动和失败回退负责保护数据；用宿主自己的撤销恢复。此处是用户明确新增的分组功能；已有 ⌘X/⌘V 仍完全使用 Finder 原生移动，不改变原实现。组内多次 rename 不是跨文件原子事务。
 
 TC-038–045：核心请求契约、名称/目录/选择预检、空目录创建、单项与多项分组、同名/失效源拒绝、链接保留、故障回退与撤销；再通过真实 Finder 背景/单选/多选入口用独立临时文件联调。发布 beta.3 后重新下载校验。
+
+
+## beta.4 原生重命名流程
+
+REQ-012 / AC-012（替代 REQ-011 的命名对话框）：三个新建入口均立即创建 `untitled folder`，已占用则使用 `untitled folder 2` 等名称；不显示命名弹窗，菜单标题移除省略号。创建或分组成功后选中新文件夹并进入 Finder 内联重命名。用户可直接输入名称并按 Return 确认；不编辑时按 Return 保留默认名称。改名后 Wayfinder 撤销仍恢复原文件；原路径被其他文件占用时保留它。
+
+IN-002 / OUT-002：沿用 API-005 的空/单/多选请求，不再要求用户输入名称；成功返回文件夹 URL 和卷/文件身份。无覆盖 mkdir 对并发同名冲突重试，其他错误原样反馈。请求串行；新建成功但权限或 Finder 焦点不可用时仍保留目录并选中，在状态提示中说明可按 Return，不弹新的命名或授权窗口。
+
+ADR-005：公开 NSWorkspace API 能揭示和选中文件，但不提供内联重命名参数。选择揭示后验证 Finder 为前台、文件区域焦点、且 AXSelectedRows / AXSelectedChildren 中的单个文件 URL 精确等于新目录，再通过公开 AXPress 调用 Finder 自己的 Rename 菜单命令。有限等待，期间有用户键盘/鼠标输入则放弃。按英文、简体中文、繁体中文菜单标题匹配唯一可用命令，不依赖菜单位置；其他语言仍创建并选中，提示手动 Return。只需要辅助功能授权，不为重命名依赖 Finder AppleScript 自动化，不发送合成键盘事件。相比完全模拟 Finder 新建命令，文件创建与分组仍可独立于权限完成并保留已有数据保护。
+
+MOD-007：FinderRename 只负责揭示、选择校验和进入原生编辑；文件内容仍由 MOD-006 管理。FolderCreation 的撤销按卷/文件身份在原父目录查找改名后的目录，不跨目录追踪、不误用原路径的替换文件。API-005 宿主收到合法请求后直接创建，不再经过命名 UI。
+
+TC-051–054：自动名称、并发同名、空/单/多改名后撤销、目录内容/父目录变化保护的真实文件测试。TC-055：Finder 空、单、多入口立即创建且 AX 编辑器出现；TC-056：缺少权限/用户切换时不误发键；TC-057：新版包签名和下载校验。正式发布前记录实际结果及未运行项。
+
+依据：[NSWorkspace 揭示 API](https://developer.apple.com/documentation/appkit/nsworkspace/activatefileviewerselecting(_:)) 与 [Apple Finder 重命名说明](https://support.apple.com/en-mt/guide/mac-help/mchlp1144/mac)。
