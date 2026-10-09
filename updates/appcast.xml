@@ -2,12 +2,23 @@
 IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
 --><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
   <channel>
+    <item>
+      <title>Wayfinder v0.1.0-beta.7</title>
+      <pubDate>Fri, 09 Oct 2026 18:57:11 GMT</pubDate>
+      <sparkle:version>7</sparkle:version>
+      <sparkle:shortVersionString>0.1.0-beta.7</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+      <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+      <description>更新内容请查看 GitHub Release：v0.1.0-beta.7</description>
+      <link>https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.7</link>
+      <enclosure url="https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.7/Wayfinder-v0.1.0-beta.7-macOS-arm64.zip" length="1497831" type="application/octet-stream" sparkle:edSignature="Lz2ku2LHx8gLyvsv0LI0//4S4gZSD7LM9zct5XUMcBQmEu1hLcBdFn5GXhwaPSeL+hV1hFJiuWArK4NYgkEFCQ=="></enclosure>
+    </item>
     <title>Wayfinder 更新</title>
     <link>https://github.com/yangbo-s/Wayfinder/releases</link>
     <description>Wayfinder for macOS</description>
     <language>zh-CN</language>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: tzGq6u+EPFIhVoAq2ot8Yv1pYqPZ5Le8pPm9ZX5ZbYqEHKiWHASrmqZCrnrW6zOG8tEj4odbpTOHR1717HaEBg==
-length: 592
+edSignature: ObhdUS3KKLVjrLO38cc1xqVJw4DHzyoxq+QI8jWk14DUjqZ2uEPzcqfuvaByFtXMwnrlmdeCk+DmbYFJ0B2zCg==
+length: 1455
 -->

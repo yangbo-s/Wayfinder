@@ -235,3 +235,26 @@ UI 独立审查 disposition：**ship**（仅界面范围），实际深色截图
 本轮范围评分 **88/100**：需求 24/25（三个控件及依赖状态齐全，后台安装完整调度仍待测），正确性 22/25（验签与本机安装通过，首次重启界面读数差异未确认），测试 16/20（58 项及真实安装/网络失败，正式签名与其他系统未覆盖），架构 9/10（Sparkle 负责调度与安装，宿主只适配状态和忙碌回调），代码 9/10（固定依赖、密钥留在钥匙串、原子写 feed、显式 ad-hoc 构建），文档交付 8/10（源码、说明、日志与本地包齐全；按本轮范围未做线上发布验证）。
 
 本地包：`dist/Wayfinder-v0.1.0-beta.7-macOS-arm64.dmg` / `.zip`。SHA-256：DMG `6d7f13a83f391a6e749cd7ef43ec371629278aae5b90a33e302a6065befe941b`，App ZIP `f4edbfc1bd2dd690929e95588eb54724014fddf9d0c75a2977278d137fb99e01`。这些是待发布产物，不能据此声称 beta.7 已在 GitHub 上线。
+
+
+### beta.7 公开发布记录（2026-10-09）
+
+用户随后明确授权“push 上去，连同包”。源码 `8a5d233278ae58b3370d573db53d4a11e3c9c49b` 与标签 `v0.1.0-beta.7` 已原子推送至 origin。Release 已公开、非草稿并标记 prerelease，五个资产均为 uploaded。本记录补充上面的本地阶段状态，不修改已验证二进制。
+
+TC-076 / REQ-006 / AC-006：从无需登录的公开下载地址重新下载 DMG、App ZIP、音效源包、appcast.xml 和 SHA256SUMS.txt，五份文件与本地发布产物逐字节一致，四个 SHA-256 校验全部 OK。下载的 feed 与 App ZIP 经官方 sign_update 再次验证 Ed25519 签名；构建号 7、enclosure 长度与实际 ZIP 一致。仅在公开资产校验通过后，才将这份签名 feed 原样复制至 `updates/appcast.xml` 随本验收提交推送。
+
+| 资产 | 大小（字节） | SHA-256 |
+|---|---:|---|
+| appcast.xml | 1599 | b592b95a45bfe68c64cd97582abe309ebdc8a33b02b956904d45ea2a295f01fd |
+| SHA256SUMS.txt | 395 | af193984c65e95d6a75ab7c2b3c9fb7c11caa1358b645008d578d668eb3ee743 |
+| Wayfinder-v0.1.0-beta.7-Cut-Sounds.zip | 339439 | e737cd52449a67c459670638eb6f5fe07d4e604b509d0ac9c10b7050dc0f2847 |
+| Wayfinder-v0.1.0-beta.7-macOS-arm64.dmg | 1730136 | 6d7f13a83f391a6e749cd7ef43ec371629278aae5b90a33e302a6065befe941b |
+| Wayfinder-v0.1.0-beta.7-macOS-arm64.zip | 1497831 | f4edbfc1bd2dd690929e95588eb54724014fddf9d0c75a2977278d137fb99e01 |
+
+发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.7
+
+beta.6 及更早版本必须先手动安装本版；公开更新源为 `https://raw.githubusercontent.com/yangbo-s/Wayfinder/main/updates/appcast.xml`。未替换本机 `/Applications` 安装，未改动用户授权。发布说明保留首次自动重启版本显示滞后、后台自动安装完整调度及其他系统未实测的限制。
+
+发布前修正了签名测试依赖仓库空 feed 的问题，改为每次生成独立签名 fixture；对最终公开 App ZIP 的 7 项签名测试重新通过。没有修改 App 代码或重建安装包，沿用 51 项核心/音效/更新集成测试证据。
+
+发布范围评分 **89/100**：需求 24/25、正确性 22/25、测试 16/20、架构 9/10、代码 9/10，扣分原因延续上节；文档交付提升为 9/10，已补齐公开下载和签名验证，仍无 Developer ID 公证及 Intel 实测。
