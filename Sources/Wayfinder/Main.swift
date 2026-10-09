@@ -16,6 +16,7 @@ enum WayfinderMain {
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let model = AppModel()
+    let updater = AppUpdater()
     private var status: NSStatusItem!
     private var window: NSWindow?
     private var handledExternalAction = false
@@ -23,6 +24,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         model.showSettings = { [weak self] in self?.showSettings() }
         model.start()
+        model.folderActivityChanged = { [weak self] busy in self?.updater.relaunchGate.isBusy = busy }
+        updater.start()
         setupApplicationMenu()
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         status.button?.image = WayfinderSymbol.image()
@@ -77,6 +80,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         menu.addItem(.separator())
         add(menu, "设置…", #selector(showSettings), key: ",")
+        add(menu, updater.availableVersion.map { "查看更新（\($0)）…" } ?? "检查更新…", #selector(checkForUpdates))
+        menu.items.last?.isEnabled = updater.canCheckForUpdates
         add(menu, "退出 Wayfinder", #selector(quit), key: "q")
     }
     private func add(_ menu: NSMenu, _ title: String, _ action: Selector, key: String = "") {
@@ -84,7 +89,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     @objc func showSettings() {
         if window == nil {
-            let host = NSHostingController(rootView: SettingsView(model: model))
+            let host = NSHostingController(rootView: SettingsView(model: model, updater: updater))
             let w = NSWindow(contentViewController: host)
             w.title = "Wayfinder"; w.setContentSize(NSSize(width: 800, height: 660))
             w.styleMask = [.titled, .closable, .miniaturizable, .resizable]
@@ -99,6 +104,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func copyPath() { model.copyCurrentPath() }
     @objc private func undoFolder() { model.undoFolderCreation() }
     @objc private func quit() { NSApp.terminate(nil) }
+    @objc private func checkForUpdates() { updater.checkForUpdates() }
     private func setupApplicationMenu() {
         let bar = NSMenu()
         let appItem = NSMenuItem(); bar.addItem(appItem)

@@ -20,7 +20,8 @@ final class AppModel: ObservableObject {
     @Published var notice: String?
     @Published var noticeIsError = false
     @Published var conflictingApp = false
-    @Published var folderBusy = false
+    @Published var folderBusy = false { didSet { folderActivityChanged?(folderBusy) } }
+    var folderActivityChanged: ((Bool) -> Void)?
     @Published var lastCreatedFolder: FolderCreation.Result?
     private let folders = FolderCreation()
     private let folderQueue = DispatchQueue(label: "local.wayfinder.folders", qos: .userInitiated)

@@ -17,7 +17,23 @@
 	<key>CFBundleShortVersionString</key>
 	<string>0.1.0</string>
 	<key>CFBundleVersion</key>
-	<string>6</string>
+	<string>7</string>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/yangbo-s/Wayfinder/main/updates/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>TBoNf99uqzEGXtB0sJWUD2OQGt42v6gkqWErVNrYXSc=</string>
+	<key>SURequireSignedFeed</key>
+	<true/>
+	<key>SUVerifyUpdateBeforeExtraction</key>
+	<true/>
+	<key>SUEnableAutomaticChecks</key>
+	<false/>
+	<key>SUAutomaticallyUpdate</key>
+	<false/>
+	<key>SUSendProfileInfo</key>
+	<false/>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
 	<key>LSMinimumSystemVersion</key>
 	<string>13.0</string>
 	<key>LSUIElement</key>

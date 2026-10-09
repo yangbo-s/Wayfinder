@@ -1,0 +1,77 @@
+Sparkle local verification — 2026-10-09
+
+Command: ./scripts/test.sh
+PASS automatic folder names preserve existing items
+PASS automatic name retries concurrent collision
+PASS undo follows renamed empty and grouped folders
+PASS renamed folder undo protects changed contents and parent
+PASS folder request contract and 2000 items
+PASS empty folder and undo
+PASS single and multiple grouping and undo
+PASS folder rejects invalid names, collisions and selections
+PASS group preserves symlink and broken link
+PASS failed move rolls back completed moves
+PASS failed rollback retains recoverable files
+PASS undo protects new or replaced items
+PASS ordinary launch always shows settings
+PASS reopen shows settings
+PASS background and login launch stay quiet
+PASS external request does not show settings
+PASS permission and listener are distinct
+PASS Finder target ignores selected child
+PASS Finder empty and mixed selections
+PASS Finder errors validate known reasons
+PASS cut moves only after fresh file copy
+PASS text clipboard cannot become move
+PASS clipboard replacement cancels move
+PASS paste validates before poll
+PASS cancel and disabled
+PASS repeat cut invalidates original
+PASS normal copy stays copy
+PASS invalid paths
+PASS symlink, Unicode, file parent, multi-copy
+PASS missing directory
+PASS empty and remote copy
+PASS URL special character roundtrip
+PASS URL rejects unknown actions and duplicate fields
+PASS custom args remain literal
+PASS actual zsh quoting without command substitution
+PASS AppleScript escaping
+PASS default terminal identifiers
+37 tests, 0 failures
+PASS fourteen distinct bundled sounds load, cache and honor system UI audio
+PASS all five beta.5 saved sound IDs still map to their original audio
+PASS missing and corrupt resources report errors
+PASS upgrade preserves mute and unknown selection uses the default
+PASS every sound selection persists across model recreation
+PASS muted cuts stay silent while explicit preview remains available
+PASS prepared cut plays selected sound once and toggle persists
+PASS audio failure reports status without stealing Finder focus
+8 sound integration tests, 0 failures
+PASS updater defaults are opt-in and cannot check before starting
+PASS real Sparkle starts with signed-feed configuration and start is idempotent
+PASS automatic installation requires automatic checking
+PASS disabling checks suspends installation without erasing the saved choice
+PASS real Sparkle preferences persist across controller recreation
+PASS updater relaunch waits for a file operation and resumes exactly once
+6 updater integration tests, 0 failures
+
+Command: PYTHONDONTWRITEBYTECODE=1 DEVELOPER_DIR=/Library/Developer/CommandLineTools python3 Tests/AppTests/test_appcast.py .build/sparkle-release-tests/Wayfinder-v0.1.0-beta.7-macOS-arm64.zip
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.347s
+
+OK
+Signed build 7: /var/folders/7j/jkg8wfy534l7yh80hbcl75_40000gn/T/tmpchthdkav/appcast.xml
+Signed build 7: /var/folders/7j/jkg8wfy534l7yh80hbcl75_40000gn/T/tmpy3w5mw4i/appcast.xml
+
+Publication regression — 2026-10-09
+Signed-feed tests use an isolated signed empty fixture so publishing the current build does not invalidate the tests. No application code or release binary changed.
+Command: PYTHONDONTWRITEBYTECODE=1 DEVELOPER_DIR=/Library/Developer/CommandLineTools python3 Tests/AppTests/test_appcast.py dist/Wayfinder-v0.1.0-beta.7-macOS-arm64.zip
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.302s
+
+OK
+Signed build 7: /var/folders/7j/jkg8wfy534l7yh80hbcl75_40000gn/T/tmpj1j0mgf4/appcast.xml
+Signed build 7: /var/folders/7j/jkg8wfy534l7yh80hbcl75_40000gn/T/tmpwa6wl4fw/appcast.xml

@@ -3,11 +3,12 @@ import WayfinderCore
 
 struct SettingsView: View {
     @ObservedObject var model: AppModel
+    @ObservedObject var updater: AppUpdater
     @State private var page: Page = .general
     enum Page: String, CaseIterable {
-        case general = "概览", terminal = "终端", permissions = "权限与设置"
+        case general = "概览", terminal = "终端", permissions = "权限与设置", updates = "软件更新"
         var symbol: String {
-            switch self { case .general: return "folder"; case .terminal: return "terminal"; case .permissions: return "slider.horizontal.3" }
+            switch self { case .general: return "folder"; case .terminal: return "terminal"; case .permissions: return "slider.horizontal.3"; case .updates: return "arrow.triangle.2.circlepath" }
         }
     }
     var body: some View {
@@ -55,6 +56,7 @@ struct SettingsView: View {
                     case .general: general
                     case .terminal: terminal
                     case .permissions: permissions
+                    case .updates: UpdateSettingsView(updater: updater)
                     }
                 }.padding(30).frame(maxWidth: .infinity, alignment: .leading)
             }.background(Color(nsColor: .windowBackgroundColor))
@@ -65,6 +67,7 @@ struct SettingsView: View {
         case .general: return "移动文件、打开终端、复制路径，都留在 Finder 里。"
         case .terminal: return "从当前位置出发，打开你习惯的终端。"
         case .permissions: return "只在需要时授权，随时可以关闭。"
+        case .updates: return "检查新版本，选择适合你的更新方式。"
         }
     }
     private var general: some View {

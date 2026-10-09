@@ -213,3 +213,25 @@ REQ-014 / AC-014：原五款与新增 F–N 九款合计十四款全部内置，
 发布页：https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.6
 
 本条验收提交仅补充公开下载证据，不改变发布标签与已安装二进制。
+
+## Sparkle 接入本地验收（2026-10-09，build 7，未发布）
+
+关联 REQ-015 / AC-015、REQ-016 / AC-016；需求、接口与发布顺序见 [SPARKLE.md](SPARKLE.md)。本轮按用户“先完成代码和验证”执行，未推送、发布或替换 `/Applications/Wayfinder.app`。Developer ID 并非 Sparkle 的必要条件；本轮实际验证 ad-hoc + Hardened Runtime + 仅宿主关闭 Library Validation 的组合，未更改系统 Gatekeeper。正式身份构建继续使用不含该例外的原 entitlement 文件。
+
+| 用例 | 实际结果与证据 |
+|---|---|
+| TC-071 | 通过：真实 SPUUpdater 启动、启动幂等、两个自动选项默认关闭、安装依赖自动检查、关掉检查保留安装偏好、跨控制器持久化；独立测试 bundle/domain，不修改用户设置 |
+| TC-072 | 通过：文件操作期间保存 Sparkle 安装回调，结束时仅调用一次，空闲时不延迟；属于回调行为测试，未用真实 Finder 长时间操作触发更新重启 |
+| TC-073 | 通过：真实官方工具对 archive/feed 签名并验证；篡改 archive/feed、错误 bundle ID、公钥、显示版本、禁用验签配置、重复构建号、被篡改旧 feed 均拒绝，失败不覆盖原输出。7 项 Python 测试 |
+| TC-074 | 部分通过：独立测试 App 实际打开设置页、切换两个开关；有效本地签名 feed 被发现，下载、解压、安装成功，磁盘 build 从 7 变为 8，进程重启。首次界面读数仍为 7，再次退出并打开后实际显示 8；自动重启后的首次版本刷新未完全确认。空 feed 检查时间更新，但未捕获“已是最新版”窗口。关闭本机测试服务后出现 Sparkle Update Error，关闭错误后检查按钮重新可用 |
+| TC-075 | 本地通过：arm64 宿主/扩展 build 7，嵌入 Sparkle 2.10.0 及安装助手、许可、rpath；最终 App deep/strict 签名通过，flags 为 adhoc/runtime。最终 ZIP 的 117 个文件及符号链接与 App 一致，DMG 校验和、App ZIP 与音效 ZIP 压缩完整性、四项 SHA-256 校验通过。未验证 Developer ID、公证或公开下载 |
+
+自动化总计 **58 项通过，0 失败**：37 项核心、8 项音效、6 项真实 Sparkle/安装回调集成、7 项发布签名测试。日志见 [sparkle-test-results.txt](sparkle-test-results.txt) 与 [sparkle-build-results.txt](sparkle-build-results.txt)。沙盒内首次打包因 iconutil 权限失败；经工具批准在本机重跑完整打包成功，并非忽略失败继续交付。
+
+真实 UI 更新使用独立 `local.wayfinder.preview.sparkle`、本次生成的测试目录和仅监听 `127.0.0.1:18763` 的服务；测试包去掉 Finder 扩展与 URL scheme，避免抢占正常安装。只在该测试包中允许本机 HTTP，正式 Info.plist 仍为 HTTPS。完成后已退出测试 App、停止本机服务。开发中的正式更新源仍是已签名空 feed，生成的 release appcast 仅在 dist，尚未对外生效。
+
+UI 独立审查 disposition：**ship**（仅界面范围），实际深色截图见本地 `.impeccable/review/sparkle-macos.png` 与 `sparkle-macos-enabled.png`，未见裁切或状态解释缺失。浅色、VoiceOver、其他窗口宽度、其他 macOS/Intel、自动下载后退出安装的完整调度路径、真实文件操作与重启并发未实测；未重跑无关 Finder 全流程，不称作完整线上更新验收。
+
+本轮范围评分 **88/100**：需求 24/25（三个控件及依赖状态齐全，后台安装完整调度仍待测），正确性 22/25（验签与本机安装通过，首次重启界面读数差异未确认），测试 16/20（58 项及真实安装/网络失败，正式签名与其他系统未覆盖），架构 9/10（Sparkle 负责调度与安装，宿主只适配状态和忙碌回调），代码 9/10（固定依赖、密钥留在钥匙串、原子写 feed、显式 ad-hoc 构建），文档交付 8/10（源码、说明、日志与本地包齐全；按本轮范围未做线上发布验证）。
+
+本地包：`dist/Wayfinder-v0.1.0-beta.7-macOS-arm64.dmg` / `.zip`。SHA-256：DMG `6d7f13a83f391a6e749cd7ef43ec371629278aae5b90a33e302a6065befe941b`，App ZIP `f4edbfc1bd2dd690929e95588eb54724014fddf9d0c75a2977278d137fb99e01`。这些是待发布产物，不能据此声称 beta.7 已在 GitHub 上线。

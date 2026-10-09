@@ -4,7 +4,7 @@
 
 Wayfinder is a lightweight, native macOS Finder companion for cut & paste, opening your preferred terminal, and copying resolved filesystem paths.
 
-[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.6) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
+[下载测试版](https://github.com/yangbo-s/Wayfinder/releases/tag/v0.1.0-beta.7) · [功能与安装](#安装与使用) · [构建与测试](#构建与测试) · [MIT License](LICENSE)
 
 | 功能 | 行为 |
 |---|---|
@@ -15,19 +15,26 @@ Wayfinder is a lightweight, native macOS Finder companion for cut & paste, openi
 | 新建文件夹 | 随时新建空文件夹，或将单个 / 多个所选项目放入新文件夹 |
 | 登录时启动 | 可选，后台驻留菜单栏 |
 | 剪切提示音 | 十四款原创音效可选择、试听，成功进入待移动状态后播放，可关闭 |
+| 软件更新 | 手动检查、自动检查、自动安装；自动选项默认关闭 |
 
-无需账号，不联网，无第三方运行时依赖。界面为中文，跟随系统深浅色。
+无需账号，Finder 功能在本机运行。Sparkle 更新功能仅在手动检查或启用自动检查时连接 GitHub；不发送文件、路径或系统概况。界面为中文，跟随系统深浅色。
+
+## 软件更新
+
+设置 → **软件更新** 提供“检查更新…”、“自动检查更新”和“自动安装更新”。两个自动开关默认关闭；自动安装需要先开启自动检查，会在后台下载并于退出时安装，需要确认时仍会提示。检查开关关闭后保留安装偏好；当前文件夹操作完成前会推迟重启。
+
+使用 Sparkle 2.10.0，并校验更新目录与安装包的 Ed25519 签名。从 beta.6 或更早版本升级，需要手动安装 beta.7 一次，后续可在 App 内检查更新。构建、密钥与发布步骤见 [Sparkle 接入说明](docs/SPARKLE.md)。
 
 ## 下载
 
-当前版本为 **v0.1.0-beta.6**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
+当前版本为 **v0.1.0-beta.7**，提供 **Apple Silicon（arm64）** 安装包，要求 **macOS 13 或更新版本**；实际构建和界面检查运行于 macOS 27.0.1。Intel 用户目前需要从源码构建，未提供经过测试的 Intel 安装包。
 
-- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.6/Wayfinder-v0.1.0-beta.6-macOS-arm64.dmg)：打开后拖到 Applications。
-- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.6/Wayfinder-v0.1.0-beta.6-macOS-arm64.zip)：解压后移动 App。
-- [下载十四款原创音效与生成代码](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.6/Wayfinder-v0.1.0-beta.6-Cut-Sounds.zip)：音频也已内置在 App 中，无需单独安装。
-- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.6/SHA256SUMS.txt)。
+- [下载 DMG 安装包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.7/Wayfinder-v0.1.0-beta.7-macOS-arm64.dmg)：打开后拖到 Applications。
+- [下载 ZIP 压缩包](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.7/Wayfinder-v0.1.0-beta.7-macOS-arm64.zip)：解压后移动 App。
+- [下载十四款原创音效与生成代码](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.7/Wayfinder-v0.1.0-beta.7-Cut-Sounds.zip)：音频也已内置在 App 中，无需单独安装。
+- [SHA-256 校验文件](https://github.com/yangbo-s/Wayfinder/releases/download/v0.1.0-beta.7/SHA256SUMS.txt)。
 
-**测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。37 项核心测试和 8 项音效集成测试通过；Finder 的空文件夹、单项/多项分组与撤销已实测；右键路径复制和终端请求延续 beta.2 的验证。完整快捷键剪切、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
+**测试版状态：** 本地 ad-hoc 签名，尚无 Apple Developer ID 签名和公证。下载后 macOS 可能要求在「系统设置 → 隐私与安全性」中确认打开。请仅在信任源码和发布来源时继续；无需关闭 Gatekeeper 或执行移除隔离属性的命令。58 项自动化测试通过（37 项核心、8 项音效、6 项更新集成、7 项发布签名）；Finder 的空文件夹、单项/多项分组与撤销已实测；右键路径复制和终端请求延续 beta.2 的验证。本地更新下载安装已验证；自动重启后首次版本显示曾滞后，再次打开后正确。后台自动安装完整调度、完整快捷键剪切、终端工作目录读取和重新登录仍有待验收，详见[验收记录](docs/ACCEPTANCE.md)。
 
 ## 安装与使用
 
@@ -82,17 +89,17 @@ Finder 工具栏的下箭头由系统提供，现已对应真正的功能菜单�
 
 ## 构建与测试
 
-需要 macOS 13+ 和 Swift 5.9+ Command Line Tools。无第三方依赖。测试脚本使用轻量断言适配器运行同一份 XCTest 风格测试，避免 Command Line Tools 未附带 XCTest 的限制；完整 Xcode 也可直接 `swift test`。
+需要 macOS 13+ 和 Swift 5.9+ Command Line Tools。首次构建需联网下载锁定版本的 Sparkle。测试脚本使用轻量断言适配器运行同一份 XCTest 风格测试，避免 Command Line Tools 未附带 XCTest 的限制；完整 Xcode 也可直接 `swift test`。
 
 ```sh
 ./scripts/test.sh
-./scripts/build.sh
+ALLOW_ADHOC_UPDATES=1 ./scripts/build.sh
 open dist/Wayfinder.app --args --settings
 ```
 
 脚本默认使用 `/Library/Developer/CommandLineTools`，不修改全局 xcode-select。如已配置完整 Xcode，可显式传入 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`。`ARCH=arm64` 或 `ARCH=x86_64` 选择构建架构；默认为本机架构。
 
-生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `./scripts/package-release.sh v0.1.0-beta.6` 生成，包含 DMG、ZIP 和 SHA-256。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
+生成 `dist/Wayfinder.app` 与 `dist/Wayfinder.zip`。发布包可用 `ALLOW_ADHOC_UPDATES=1 ./scripts/package-release.sh v0.1.0-beta.7` 生成，包含 DMG、ZIP、签名 appcast 和 SHA-256；需要本机更新签名密钥，且构建号必须高于当前更新源，已发布版本不能重复生成。ad-hoc 测试包仅对本 App 关闭 Library Validation 以加载 Sparkle，其他 Hardened Runtime 保护保持开启，不修改系统 Gatekeeper。可用 `SIGNING_IDENTITY='Developer ID Application: …'` 选择自己的签名；分发到其他机器还需按 Apple 流程公证，不能将本地签名视作已公证。
 
 源码可用 Xcode 打开 `Package.swift`；完整宿主 + 扩展打包由 `scripts/build.sh` 执行。直接运行 Swift Package 的可执行文件不包含 App 元数据和 Finder 扩展。
 
